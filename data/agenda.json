@@ -1,0 +1,66 @@
+[
+  {
+    "id": 1,
+    "data": "2026-06-18",
+    "hora": "08:00",
+    "tipo": "aula",
+    "disciplina": "Redes de Computadores",
+    "descricao": "Aula teórica — Protocolo TCP/IP e modelo OSI"
+  },
+  {
+    "id": 2,
+    "data": "2026-06-19",
+    "hora": "10:00",
+    "tipo": "prova",
+    "disciplina": "Cálculo Numérico",
+    "descricao": "Prova parcial — Métodos iterativos e interpolação"
+  },
+  {
+    "id": 3,
+    "data": "2026-06-20",
+    "hora": "14:00",
+    "tipo": "trabalho",
+    "disciplina": "Sistemas Operacionais",
+    "descricao": "Entrega do trabalho — simulador de escalonamento de processos"
+  },
+  {
+    "id": 4,
+    "data": "2026-06-21",
+    "hora": "16:00",
+    "tipo": "seminario",
+    "disciplina": "Segurança da Informação",
+    "descricao": "Seminário — Ataques de injeção SQL e mitigações"
+  },
+  {
+    "id": 5,
+    "data": "2026-06-22",
+    "hora": "08:00",
+    "tipo": "aula",
+    "disciplina": "Compiladores",
+    "descricao": "Aula prática — Construção de analisador léxico com Flex"
+  },
+  {
+    "id": 6,
+    "data": "2026-05-26",
+    "hora": "10:00",
+    "tipo": "prova",
+    "disciplina": "Redes de Computadores",
+    "descricao": "Prova parcial — Camada de transporte e controle de congestionamento"
+  },
+  {
+    "id": 7,
+    "data": "2026-05-28",
+    "hora": "14:00",
+    "tipo": "trabalho",
+    "disciplina": "Compiladores",
+    "descricao": "Entrega do analisador sintático — gramática LL(1)"
+  },
+  {
+    "id": 8,
+    "data": "2026-05-30",
+    "hora": "09:00",
+    "tipo": "seminario",
+    "disciplina": "Sistemas Operacionais",
+    "descricao": "Apresentação em grupo — comparativo entre Linux e Windows NT"
+  }
+]

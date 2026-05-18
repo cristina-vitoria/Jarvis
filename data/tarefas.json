@@ -1,0 +1,51 @@
+[
+  {
+    "id": 1,
+    "titulo": "Revisar slides de TCP/IP antes da aula",
+    "prazo": "2026-06-18",
+    "disciplina": "Redes de Computadores",
+    "status": "concluida"
+  },
+  {
+    "id": 2,
+    "titulo": "Resolver lista de exercícios de interpolação",
+    "prazo": "2026-06-19",
+    "disciplina": "Cálculo Numérico",
+    "status": "pendente"
+  },
+  {
+    "id": 3,
+    "titulo": "Implementar algoritmos FCFS e Round-Robin no simulador",
+    "prazo": "2026-06-20",
+    "disciplina": "Sistemas Operacionais",
+    "status": "pendente"
+  },
+  {
+    "id": 4,
+    "titulo": "Pesquisar casos reais de SQL Injection para o seminário",
+    "prazo": "2026-06-21",
+    "disciplina": "Segurança da Informação",
+    "status": "concluida"
+  },
+  {
+    "id": 5,
+    "titulo": "Escrever gramática formal do analisador léxico",
+    "prazo": "2026-05-27",
+    "disciplina": "Compiladores",
+    "status": "pendente"
+  },
+  {
+    "id": 6,
+    "titulo": "Estudar controle de congestionamento TCP para a prova",
+    "prazo": "2026-05-25",
+    "disciplina": "Redes de Computadores",
+    "status": "pendente"
+  },
+  {
+    "id": 7,
+    "titulo": "Montar slides da apresentação comparativo Linux x Windows NT",
+    "prazo": "2026-05-29",
+    "disciplina": "Sistemas Operacionais",
+    "status": "pendente"
+  }
+]
