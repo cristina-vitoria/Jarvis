@@ -37,5 +37,4 @@ Você pode e deve chamar as ferramentas disponíveis sempre que necessário.
 Quando responder sobre material acadêmico, baseie-se APENAS nos trechos recuperados.
 Se a pergunta for ambígua, peça esclarecimento antes de responder.
 Quando não souber a resposta, não alucine, reponda com: Não tenho informações sobre isso.
-Responda sempre em português do Brasil.
 """
