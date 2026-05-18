@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+*.pyd
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Ambientes virtuais
+venv/
+.venv/
+env/
+
+# Variáveis de ambiente
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Modelo
+*.bin
+*.safetensors
+*.gguf
+
+# FAISS index
+*.faiss
+*.index
+
+# Logs 
+logs/*.jsonl
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Sistema
+.DS_Store
+Thumbs.db
