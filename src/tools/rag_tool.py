@@ -1,19 +1,34 @@
-"""Ferramenta de RAG: recupera chunks e gera resposta fundamentada."""
+"""Ferramenta de RAG: recupera chunks e gera resposta fundamentada.
+
+Importa o revisor de `llm_client` para aplicar self-correction antes
+de retornar a resposta final ao usuário.
+"""
 
 from src.rag.retriever import recuperar
+from src.llm_client import revisar_resposta_rag
+
+MAX_RETRIES = 2  # Número máximo de tentativas de regeração
 
 
 def buscar_material_rag(pergunta: str, vectorstore, llm_fn) -> str:
     """
-    Recupera trechos relevantes dos materiais de estudo e gera uma resposta.
+    Recupera trechos relevantes dos materiais de estudo e gera uma resposta
+    verificada pelo Agente Revisor (self-correction).
+
+    Fluxo:
+        1. Recupera chunks relevantes via FAISS.
+        2. Gera resposta com o Gemma 12B usando o contexto.
+        3. Chama o revisor em background: é SIM ou NAO?
+        4. Se NAO, regenera a resposta (até MAX_RETRIES tentativas).
+        5. Retorna a melhor resposta obtida.
 
     Args:
         pergunta: pergunta acadêmica do usuário.
         vectorstore: índice FAISS com os documentos.
-        llm_fn: função que recebe uma lista de mensagens e retorna string.
+        llm_fn: função que recebe lista de mensagens e retorna string.
 
     Returns:
-        Resposta gerada com base nos documentos recuperados.
+        Resposta gerada e validada com base nos documentos recuperados.
     """
     chunks = recuperar(pergunta, vectorstore)
 
@@ -25,21 +40,35 @@ def buscar_material_rag(pergunta: str, vectorstore, llm_fn) -> str:
     )
     fontes = list({c['fonte'] for c in chunks})
 
-    messages = [
-        {
-            "role": "system",
-            "content": (
-                "Você é um assistente acadêmico. Responda à pergunta do aluno "
-                "usando APENAS as informações do contexto abaixo. "
-                "Se a resposta não estiver no contexto, diga que não encontrou nos materiais. "
-                "Cite as fontes ao final."
-            ),
-        },
-        {
-            "role": "user",
-            "content": f"Contexto:\n{contexto}\n\nPergunta: {pergunta}",
-        },
-    ]
+    def _montar_messages() -> list:
+        return [
+            {
+                "role": "system",
+                "content": (
+                    "Você é um assistente acadêmico. Responda à pergunta do aluno "
+                    "usando APENAS as informações do contexto abaixo. "
+                    "Se a resposta não estiver no contexto, diga que não encontrou nos materiais.  NUNCA invente ou adivinhe conceitos acadêmicos. Não alucine "
+                    "Cite as fontes ao final."
+                ),
+            },
+            {
+                "role": "user",
+                "content": f"Contexto:\n{contexto}\n\nPergunta: {pergunta}",
+            },
+        ]
 
-    resposta = llm_fn(messages)
-    return f"{resposta}\n\n📚 Fontes consultadas: {', '.join(fontes)}"
+    resposta = llm_fn(_montar_messages())
+
+    # --- Agente Revisor (Self-Correction) ---
+    for tentativa in range(1, MAX_RETRIES + 1):
+        aprovada = revisar_resposta_rag(pergunta, contexto, resposta)
+        if aprovada:
+            break
+        print(
+            f"[Revisor] Tentativa {tentativa}/{MAX_RETRIES}: resposta reprovada. "
+            "Regerando..."
+        )
+        resposta = llm_fn(_montar_messages())
+    # -----------------------------------------
+
+    return f"{resposta}\n\n\U0001f4da Fontes consultadas: {', '.join(fontes)}"
