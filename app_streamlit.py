@@ -43,9 +43,10 @@ def _init_state():
         "agente": None,
         "vectorstore": None,
         "historico_chat": [],
-        # Quiz UI state (espelho do QuizSession no agente)
-        "quiz_feedback": None,      # feedback da última resposta
-        "quiz_respondeu": False,     # True após clicar numa opção, antes de avançar
+        # Quiz UI state
+        "quiz_feedback": None,       # dict {correto, texto} da última resposta
+        "quiz_respondeu": False,      # True após clicar numa opção, antes de avançar
+        "quiz_relatorio_pendente": None,  # relatório final guardado até o próximo rerun
     }
     for k, v in defaults.items():
         if k not in st.session_state:
@@ -91,6 +92,7 @@ with st.sidebar:
                 agente_ref.quiz_session = None
                 st.session_state["quiz_feedback"] = None
                 st.session_state["quiz_respondeu"] = False
+                st.session_state["quiz_relatorio_pendente"] = None
                 st.rerun()
         else:
             st.success("✅ JARVIS ativo")
@@ -124,6 +126,7 @@ with st.sidebar:
         st.session_state["historico_chat"] = []
         st.session_state["quiz_feedback"] = None
         st.session_state["quiz_respondeu"] = False
+        st.session_state["quiz_relatorio_pendente"] = None
         agente_r = st.session_state.get("agente")
         if agente_r:
             agente_r.quiz_session = None
@@ -168,12 +171,12 @@ with tab_chat:
             f'<div class="quiz-progress">Pergunta {idx + 1} de {total} · Tópico: {sess.topico}</div>',
             unsafe_allow_html=True,
         )
-        st.progress((idx) / total)
+        st.progress(idx / total)
 
         with st.container():
             st.markdown(f'<div class="quiz-card"><b>{q["enunciado"]}</b></div>', unsafe_allow_html=True)
 
-        # Feedback da resposta anterior (se acabou de responder)
+        # --- Feedback da resposta anterior ---
         if st.session_state["quiz_feedback"]:
             fb = st.session_state["quiz_feedback"]
             css_class = "feedback-correct" if fb["correto"] else "feedback-incorrect"
@@ -182,35 +185,48 @@ with tab_chat:
                 f'<div class="{css_class}">{icon} {fb["texto"]}</div>',
                 unsafe_allow_html=True,
             )
-            if st.button("➡️ Próxima pergunta" if not sess.concluido else "🏁 Ver resultado",
-                         type="primary", use_container_width=True):
+
+            # Verifica se o quiz já terminou (concluido == True significa que
+            # registrar_resposta() incrementou indice_atual até o fim)
+            quiz_terminou = sess.concluido
+            label_btn = "🏁 Ver resultado" if quiz_terminou else "➡️ Próxima pergunta"
+
+            if st.button(label_btn, type="primary", use_container_width=True):
                 st.session_state["quiz_feedback"] = None
                 st.session_state["quiz_respondeu"] = False
-                if sess.concluido:
-                    # Quiz terminou — mostrar relatório
+
+                if quiz_terminou:
+                    # Gera o relatório ANTES de destruir a sessão
                     relatorio = sess.relatorio_final()
                     agente.quiz_session = None
-                    st.session_state["historico_chat"].append({"role": "assistant", "content": relatorio})
+                    st.session_state["historico_chat"].append(
+                        {"role": "assistant", "content": relatorio}
+                    )
+
                 st.rerun()
-        else:
-            # Botões de alternativas
+
+        # --- Botões de alternativas (só exibe se não respondeu ainda) ---
+        elif not st.session_state["quiz_respondeu"]:
             if q.get("opcoes"):
                 cols = st.columns(2)
                 letras = ["A", "B", "C", "D"]
                 for i, opcao in enumerate(q["opcoes"]):
                     with cols[i % 2]:
-                        if st.button(opcao, key=f"opcao_{idx}_{i}",
-                                     use_container_width=True,
-                                     disabled=st.session_state["quiz_respondeu"]):
+                        if st.button(
+                            opcao,
+                            key=f"opcao_{idx}_{i}",
+                            use_container_width=True,
+                        ):
                             letra_escolhida = letras[i]
-                            gabarito = q.get("gabarito", "").upper()
-                            correto = letra_escolhida == gabarito
+                            gabarito = q.get("gabarito", "").strip().upper()
+                            correto = letra_escolhida == gabarito[:1]
                             explicacao = q.get("explicacao", "")
                             texto_fb = (
                                 f"Correto! {explicacao}"
                                 if correto
                                 else f"Incorreto. A resposta certa era **{gabarito}**. {explicacao}"
                             )
+                            # Registra a resposta no QuizSession (incrementa indice)
                             sess.registrar_resposta(letra_escolhida, correto, explicacao)
                             st.session_state["quiz_feedback"] = {"correto": correto, "texto": texto_fb}
                             st.session_state["quiz_respondeu"] = True
@@ -225,6 +241,9 @@ with tab_chat:
                             st.session_state["historico_chat"].append(
                                 {"role": "assistant", "content": resultado_str}
                             )
+                            # Se o quiz terminou (_processar_resposta_quiz destri a sessão)
+                            st.session_state["quiz_feedback"] = None
+                            st.session_state["quiz_respondeu"] = False
                             st.rerun()
 
     # ======================================================
