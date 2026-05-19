@@ -1,6 +1,8 @@
 """Orquestrador principal do JARVIS Acadêmico."""
 
+import time
 import traceback
+from openai import APITimeoutError, InternalServerError, APIConnectionError
 from src.llm_client import gerar_resposta, decidir_ferramenta
 from src.logger import log_tool_call
 from src.config import SYSTEM_PROMPT
@@ -93,6 +95,29 @@ TOOLS_SCHEMA = [
     },
 ]
 
+# Erros de API que justificam retry
+_ERROS_RETRY = (APITimeoutError, InternalServerError, APIConnectionError)
+
+
+def _gerar_com_retry(messages: list, max_new_tokens: int = 512,
+                     tentativas: int = 3, espera_base: float = 5.0) -> str:
+    """
+    Chama gerar_resposta com backoff exponencial.
+    Lança a última exceção se todas as tentativas falharem.
+    """
+    ultimo_erro = None
+    for i in range(tentativas):
+        try:
+            return gerar_resposta(messages, max_new_tokens=max_new_tokens)
+        except _ERROS_RETRY as exc:
+            ultimo_erro = exc
+            espera = espera_base * (2 ** i)   # 5s, 10s, 20s
+            print(f"[JARVIS][retry {i+1}/{tentativas}] {type(exc).__name__} — aguardando {espera:.0f}s")
+            time.sleep(espera)
+        except Exception:
+            raise
+    raise ultimo_erro  # type: ignore[misc]
+
 
 class QuizSession:
     """Mantém o estado de uma sessão de quiz em andamento."""
@@ -115,7 +140,7 @@ class QuizSession:
         return self.perguntas[self.indice_atual]
 
     def registrar_resposta(self, resposta_aluno: str, correto: bool, feedback: str):
-        q = self.perguntas[self.indice_atual]  # salva antes de incrementar
+        q = self.perguntas[self.indice_atual]
         self.historico_respostas.append({
             "pergunta": q["enunciado"],
             "opcoes": q.get("opcoes", []),
@@ -163,7 +188,6 @@ class JarvisAgent:
     # ------------------------------------------------------------------
 
     def _formatar_pergunta_quiz(self) -> str:
-        """Formata a pergunta atual do quiz para exibição."""
         sess = self.quiz_session
         q = sess.pergunta_atual
         total = len(sess.perguntas)
@@ -185,17 +209,14 @@ class JarvisAgent:
         return "\n".join(linhas)
 
     def _processar_resposta_quiz(self, resposta_aluno: str) -> str:
-        """Avalia a resposta do aluno na pergunta atual e avança o quiz."""
         sess = self.quiz_session
-        q = sess.pergunta_atual  # snapshot ANTES de registrar (que incrementa indice)
+        q = sess.pergunta_atual
         gabarito = q.get("gabarito", "").strip().upper()
         resposta_normalizada = resposta_aluno.strip().upper()
 
         if q.get("opcoes"):
-            # Multiple-choice: compara apenas a primeira letra
             correto = resposta_normalizada[:1] == gabarito[:1]
         else:
-            # Resposta aberta: LLM julga
             prompt_aval = (
                 f"Pergunta: {q['enunciado']}\n"
                 f"Resposta esperada: {q.get('explicacao', gabarito)}\n"
@@ -203,12 +224,14 @@ class JarvisAgent:
                 "A resposta do aluno está correta, mesmo que com palavras diferentes? "
                 "Responda apenas SIM ou NAO."
             )
-            veredicto = gerar_resposta([{"role": "user", "content": prompt_aval}])
-            correto = "SIM" in veredicto.upper()
+            try:
+                veredicto = _gerar_com_retry([{"role": "user", "content": prompt_aval}], max_new_tokens=16)
+                correto = "SIM" in veredicto.upper()
+            except Exception:
+                # Em caso de falha da API, assume incorreto e continua
+                correto = False
 
         feedback = q.get("explicacao", "")
-
-        # Registra e incrementa indice_atual
         sess.registrar_resposta(resposta_aluno, correto, feedback)
 
         if sess.concluido:
@@ -225,11 +248,11 @@ class JarvisAgent:
         )
 
     # ------------------------------------------------------------------
-    # Geração de perguntas do quiz
+    # Geração de perguntas do quiz (com retry + fallback)
     # ------------------------------------------------------------------
 
     def _iniciar_quiz(self, topico: str, num_perguntas: int = 3) -> str:
-        """Gera as perguntas via LLM, armazena em quiz_session e retorna a primeira."""
+        """Gera as perguntas via LLM com retry. Em caso de falha total, retorna mensagem amigável."""
         prompt = (
             f"Crie exatamente {num_perguntas} perguntas de múltipla escolha sobre: '{topico}'.\n"
             "Use EXATAMENTE este formato para cada pergunta (sem variações):\n"
@@ -243,7 +266,27 @@ class JarvisAgent:
             "---\n"
             "Repita o bloco acima para cada pergunta. NADA mais além dos blocos."
         )
-        raw = gerar_resposta([{"role": "user", "content": prompt}])
+
+        try:
+            raw = _gerar_com_retry(
+                [{"role": "user", "content": prompt}],
+                tentativas=3,
+                espera_base=5.0,
+            )
+        except _ERROS_RETRY as exc:
+            print(f"[JARVIS][quiz] API indisponível após retries: {exc}")
+            return (
+                "⚠️ O servidor do modelo está instável no momento (502/timeout). "
+                "Aguarde alguns instantes e tente novamente. "
+                f"Tópico solicitado: **{topico}**."
+            )
+        except Exception as exc:
+            print(f"[JARVIS][quiz] Erro inesperado: {exc}")
+            return (
+                "⚠️ Ocorreu um erro inesperado ao gerar o quiz. "
+                "Tente novamente ou escolha outro tópico."
+            )
+
         perguntas = _parsear_quiz_llm(raw)
 
         if not perguntas:
@@ -264,7 +307,6 @@ class JarvisAgent:
     # ------------------------------------------------------------------
 
     def _executar_ferramenta(self, tool_name: str, arguments: dict) -> str:
-        """Executa a ferramenta e retorna o resultado como string."""
         resultado = None
         try:
             if tool_name == "consultar_agenda":
@@ -286,7 +328,7 @@ class JarvisAgent:
                     resultado = buscar_material_rag(
                         pergunta=arguments.get("pergunta", ""),
                         vectorstore=self.vectorstore,
-                        llm_fn=lambda msg: gerar_resposta(msg),
+                        llm_fn=lambda msg: _gerar_com_retry(msg),
                     )
 
             elif tool_name == "gerar_exercicios":
@@ -296,7 +338,7 @@ class JarvisAgent:
                     resultado = gerar_exercicios(
                         topico=arguments.get("topico", ""),
                         vectorstore=self.vectorstore,
-                        llm_fn=lambda msg: gerar_resposta(msg),
+                        llm_fn=lambda msg: _gerar_com_retry(msg),
                         quantidade=arguments.get("quantidade", 3),
                     )
 
@@ -323,6 +365,13 @@ class JarvisAgent:
             resultado = f"[ERRO] Arquivo não encontrado ao executar '{tool_name}': {exc}."
             print(f"[JARVIS][FileNotFoundError] {tool_name}: {exc}")
 
+        except _ERROS_RETRY as exc:
+            resultado = (
+                "⚠️ O servidor do modelo está instável (502/timeout). "
+                "Aguarde alguns segundos e tente novamente."
+            )
+            print(f"[JARVIS][APIError] {tool_name}: {exc}")
+
         except Exception as exc:  # noqa: BLE001
             resultado = (
                 f"[ERRO] Falha inesperada ao executar '{tool_name}'. "
@@ -339,9 +388,6 @@ class JarvisAgent:
     # ------------------------------------------------------------------
 
     def responder(self, user_message: str) -> str:
-        """Processa a mensagem do usuário e retorna a resposta do JARVIS."""
-
-        # ── Quiz em andamento: mensagem é a resposta do aluno ──
         if self.quiz_session is not None:
             if user_message.strip().lower() in ("cancelar", "sair", "parar", "exit"):
                 topico = self.quiz_session.topico
@@ -359,12 +405,10 @@ class JarvisAgent:
             print(f"[JARVIS] Chamando ferramenta: {tool_name}({arguments})")
             resultado_ferramenta = self._executar_ferramenta(tool_name, arguments)
 
-            # Quiz: retorna direto sem reprocessar pela LLM
             if tool_name == "quiz_interativo":
                 self.historico.append({"role": "assistant", "content": resultado_ferramenta})
                 return resultado_ferramenta
 
-            # Demais ferramentas: LLM formata a resposta final
             messages_com_resultado = self.historico + [
                 {
                     "role": "assistant",
@@ -375,9 +419,18 @@ class JarvisAgent:
                     "content": "Com base no resultado acima, responda ao usuário de forma clara e amigável em português.",
                 },
             ]
-            resposta_final = gerar_resposta(messages_com_resultado)
+            try:
+                resposta_final = _gerar_com_retry(messages_com_resultado)
+            except _ERROS_RETRY:
+                resposta_final = resultado_ferramenta  # exibe o resultado bruto se LLM falhar
         else:
-            resposta_final = gerar_resposta(self.historico)
+            try:
+                resposta_final = _gerar_com_retry(self.historico)
+            except _ERROS_RETRY:
+                resposta_final = (
+                    "⚠️ O servidor do modelo está instável no momento. "
+                    "Aguarde alguns instantes e tente novamente."
+                )
 
         self.historico.append({"role": "assistant", "content": resposta_final})
         return resposta_final
@@ -388,10 +441,6 @@ class JarvisAgent:
 # ------------------------------------------------------------------
 
 def _parsear_quiz_llm(raw: str) -> list[dict]:
-    """
-    Converte texto bruto do LLM em lista de dicts de perguntas.
-    Formato esperado por bloco (separado por „---').
-    """
     perguntas = []
     blocos = raw.strip().split("---")
     for bloco in blocos:

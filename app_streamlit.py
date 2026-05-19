@@ -44,15 +44,21 @@ def _init_state():
         "vectorstore": None,
         "historico_chat": [],
         # Quiz UI state
-        "quiz_feedback": None,       # dict {correto, texto} da última resposta
-        "quiz_respondeu": False,      # True após clicar numa opção, antes de avançar
-        "quiz_relatorio_pendente": None,  # relatório final guardado até o próximo rerun
+        "quiz_feedback": None,
+        "quiz_respondeu": False,
+        "quiz_relatorio_pendente": None,
     }
     for k, v in defaults.items():
         if k not in st.session_state:
             st.session_state[k] = v
 
 _init_state()
+
+
+# --- Helper: referência única ao agente ---
+def _agente():
+    """Retorna o agente do session_state (única fonte de verdade)."""
+    return st.session_state.get("agente")
 
 
 # --- Carregamento do agente (lazy) ---
@@ -65,6 +71,19 @@ def _carregar_agente():
     return agente, vectorstore
 
 
+def _cancelar_quiz():
+    """Cancela o quiz ativo e limpa todos os estados relacionados."""
+    ag = _agente()
+    if ag and ag.quiz_session:
+        topico = ag.quiz_session.topico
+        ag.quiz_session = None
+        st.session_state["quiz_feedback"] = None
+        st.session_state["quiz_respondeu"] = False
+        st.session_state["quiz_relatorio_pendente"] = None
+        return topico
+    return None
+
+
 # ==================== SIDEBAR ====================
 with st.sidebar:
     st.markdown('<p class="main-header">🎓 JARVIS</p>', unsafe_allow_html=True)
@@ -74,25 +93,28 @@ with st.sidebar:
     if not st.session_state["rag_carregado"]:
         if st.button("▶ Iniciar JARVIS", use_container_width=True, type="primary"):
             with st.spinner("Carregando modelo e documentos..."):
-                agente, vs = _carregar_agente()
-                st.session_state["agente"] = agente
+                agente_obj, vs = _carregar_agente()
+                st.session_state["agente"] = agente_obj
                 st.session_state["vectorstore"] = vs
                 st.session_state["rag_carregado"] = True
             st.success("JARVIS pronto!")
             st.rerun()
     else:
-        agente_ref = st.session_state["agente"]
-        if agente_ref and agente_ref.quiz_session:
-            sess = agente_ref.quiz_session
-            st.warning(f"🧠 Quiz ativo: {sess.topico}")
-            total = len(sess.perguntas)
-            idx = sess.indice_atual
-            st.progress(idx / total, text=f"{idx}/{total} respondidas")
+        ag_sidebar = _agente()
+        if ag_sidebar and ag_sidebar.quiz_session:
+            sess_sb = ag_sidebar.quiz_session
+            st.warning(f"🧠 Quiz ativo: {sess_sb.topico}")
+            total_sb = len(sess_sb.perguntas)
+            idx_sb = sess_sb.indice_atual
+            st.progress(idx_sb / total_sb, text=f"{idx_sb}/{total_sb} respondidas")
+            # ── FIX: usa _cancelar_quiz() — mesma função usada no body ──
             if st.button("🚫 Cancelar quiz", use_container_width=True):
-                agente_ref.quiz_session = None
-                st.session_state["quiz_feedback"] = None
-                st.session_state["quiz_respondeu"] = False
-                st.session_state["quiz_relatorio_pendente"] = None
+                topico_cancelado = _cancelar_quiz()
+                if topico_cancelado:
+                    st.session_state["historico_chat"].append({
+                        "role": "assistant",
+                        "content": f"Quiz sobre **{topico_cancelado}** cancelado. Como posso ajudar?",
+                    })
                 st.rerun()
         else:
             st.success("✅ JARVIS ativo")
@@ -124,12 +146,7 @@ with st.sidebar:
     st.divider()
     if st.button("🗑 Limpar conversa", use_container_width=True):
         st.session_state["historico_chat"] = []
-        st.session_state["quiz_feedback"] = None
-        st.session_state["quiz_respondeu"] = False
-        st.session_state["quiz_relatorio_pendente"] = None
-        agente_r = st.session_state.get("agente")
-        if agente_r:
-            agente_r.quiz_session = None
+        _cancelar_quiz()
         st.rerun()
 
 
@@ -143,7 +160,8 @@ tab_chat, tab_agenda, tab_tarefas, tab_logs = st.tabs(
 with tab_chat:
     st.markdown("### 💬 Converse com o JARVIS")
 
-    agente = st.session_state.get("agente")
+    # ── FIX: sempre lê o agente via session_state (única fonte de verdade) ──
+    agente = _agente()
     quiz_ativo = agente is not None and agente.quiz_session is not None
 
     # --- Histórico de mensagens ---
@@ -161,7 +179,10 @@ with tab_chat:
     # ======================================================
     # MODO QUIZ — UI dedicada com botões de múltipla escolha
     # ======================================================
-    if quiz_ativo:
+    # A MELHOR PRÁTICA: Depender do objeto existir, em vez de uma flag solta.
+    quiz_ativo = st.session_state.get("quiz_ativo", False)
+
+    if quiz_ativo and agente.quiz_session is not None:
         sess = agente.quiz_session
         q = sess.pergunta_atual
         total = len(sess.perguntas)
@@ -177,7 +198,7 @@ with tab_chat:
             st.markdown(f'<div class="quiz-card"><b>{q["enunciado"]}</b></div>', unsafe_allow_html=True)
 
         # --- Feedback da resposta anterior ---
-        if st.session_state["quiz_feedback"]:
+        if st.session_state.get("quiz_feedback"):
             fb = st.session_state["quiz_feedback"]
             css_class = "feedback-correct" if fb["correto"] else "feedback-incorrect"
             icon = "✅" if fb["correto"] else "❌"
@@ -186,62 +207,78 @@ with tab_chat:
                 unsafe_allow_html=True,
             )
 
-            # Verifica se o quiz já terminou (concluido == True significa que
-            # registrar_resposta() incrementou indice_atual até o fim)
             quiz_terminou = sess.concluido
             label_btn = "🏁 Ver resultado" if quiz_terminou else "➡️ Próxima pergunta"
 
             if st.button(label_btn, type="primary", use_container_width=True):
                 st.session_state["quiz_feedback"] = None
                 st.session_state["quiz_respondeu"] = False
-
+                
+                # LÓGICA DE ENCERRAMENTO (Gatilho)
                 if quiz_terminou:
-                    # Gera o relatório ANTES de destruir a sessão
                     relatorio = sess.relatorio_final()
                     agente.quiz_session = None
+                    st.session_state["quiz_ativo"] = False # CORREÇÃO 1: Desliga a flag
                     st.session_state["historico_chat"].append(
                         {"role": "assistant", "content": relatorio}
                     )
-
                 st.rerun()
 
-        # --- Botões de alternativas (só exibe se não respondeu ainda) ---
-        elif not st.session_state["quiz_respondeu"]:
+        # --- Aguardando Resposta ---
+        elif not st.session_state.get("quiz_respondeu", False):
+            
+            if st.button("🚫 Cancelar quiz", key="cancel_quiz_body"):
+                topico_cancelado = _cancelar_quiz()
+                st.session_state["quiz_ativo"] = False # Garante o cancelamento da flag
+                if topico_cancelado:
+                    st.session_state["historico_chat"].append({
+                        "role": "assistant",
+                        "content": f"Quiz sobre **{topico_cancelado}** cancelado. Como posso ajudar?",
+                    })
+                st.rerun()
+
+            # Botões Múltipla Escolha
             if q.get("opcoes"):
                 cols = st.columns(2)
                 letras = ["A", "B", "C", "D"]
                 for i, opcao in enumerate(q["opcoes"]):
                     with cols[i % 2]:
-                        if st.button(
-                            opcao,
-                            key=f"opcao_{idx}_{i}",
-                            use_container_width=True,
-                        ):
+                        if st.button(opcao, key=f"opcao_{idx}_{i}", use_container_width=True):
                             letra_escolhida = letras[i]
                             gabarito = q.get("gabarito", "").strip().upper()
                             correto = letra_escolhida == gabarito[:1]
                             explicacao = q.get("explicacao", "")
                             texto_fb = (
-                                f"Correto! {explicacao}"
-                                if correto
+                                f"Correto! {explicacao}" if correto
                                 else f"Incorreto. A resposta certa era **{gabarito}**. {explicacao}"
                             )
-                            # Registra a resposta no QuizSession (incrementa indice)
                             sess.registrar_resposta(letra_escolhida, correto, explicacao)
                             st.session_state["quiz_feedback"] = {"correto": correto, "texto": texto_fb}
                             st.session_state["quiz_respondeu"] = True
                             st.rerun()
+            
+            # Formulário Questão Aberta
             else:
-                # Resposta aberta
                 with st.form("quiz_open_form", clear_on_submit=True):
                     resposta_aberta = st.text_area("Sua resposta:", key="quiz_open_input")
                     if st.form_submit_button("Enviar resposta", type="primary"):
                         if resposta_aberta.strip():
+                            # CORREÇÃO 2: Processa a resposta e passa pela mesma lógica de finalização
                             resultado_str = agente._processar_resposta_quiz(resposta_aberta)
+                            
                             st.session_state["historico_chat"].append(
                                 {"role": "assistant", "content": resultado_str}
                             )
-                            # Se o quiz terminou (_processar_resposta_quiz destri a sessão)
+                            
+                            # Verifica se processar_resposta concluiu o quiz internamente
+                            if sess.concluido:
+                                relatorio = sess.relatorio_final()
+                                agente.quiz_session = None
+                                st.session_state["quiz_ativo"] = False
+                                st.session_state["historico_chat"].append(
+                                    {"role": "assistant", "content": relatorio}
+                                )
+                            
                             st.session_state["quiz_feedback"] = None
                             st.session_state["quiz_respondeu"] = False
                             st.rerun()
@@ -266,14 +303,11 @@ with tab_chat:
                 st.error("Inicie o JARVIS primeiro clicando em '▶ Iniciar JARVIS' no menu lateral.")
             else:
                 st.session_state["historico_chat"].append({"role": "user", "content": user_input})
-
                 with st.spinner("JARVIS pensando..."):
                     resposta = agente.responder(user_input)
-
                 st.session_state["historico_chat"].append({"role": "assistant", "content": resposta})
                 st.rerun()
 
-        # Sugestões rápidas
         st.markdown("**Sugestões rápidas:**")
         sugestoes = [
             "O que tenho hoje?",
