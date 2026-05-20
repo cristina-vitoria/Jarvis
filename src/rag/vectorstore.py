@@ -2,6 +2,7 @@
 
 import faiss
 from src.rag.embeddings import gerar_embeddings
+from src.rag.embeddings import gerar_embedding_query
 
 
 class VectorStore:
@@ -18,7 +19,6 @@ class VectorStore:
 
     def buscar(self, query: str, k: int = 3) -> list[dict]:
         """Retorna os k chunks mais relevantes para a query."""
-        from src.rag.embeddings import gerar_embedding_query
         q_emb = gerar_embedding_query(query)
         distancias, indices = self.index.search(q_emb, k)
         resultados = []
