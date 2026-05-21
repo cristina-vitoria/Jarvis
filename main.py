@@ -1,4 +1,12 @@
-"""JARVIS Acadêmico — ponto de entrada principal (CLI)."""
+"""JARVIS Acadêmico — ponto de entrada principal (CLI).
+
+Uso:
+    python main.py
+
+Durante um quiz, o prompt muda para '[Quiz] Resposta:' e aceita:
+  - Letra da alternativa: A, B, C ou D
+  - 'cancelar' para encerrar o quiz
+"""
 
 from src.agent import JarvisAgent
 from src.rag.loader import carregar_documentos
@@ -20,33 +28,49 @@ def inicializar_rag():
 
 
 def main():
-    print("=" * 50)
+    print("=" * 55)
     print("  JARVIS Acadêmico — Assistente Inteligente")
-    print("=" * 50)
+    print("=" * 55)
+    print("Comandos: 'sair' para encerrar | 'cancelar' durante quiz")
+    print("-" * 55)
 
     vectorstore = inicializar_rag()
     agente = JarvisAgent(vectorstore=vectorstore)
 
-    print("\nDigite sua pergunta ou comando. Digite 'sair' para encerrar.")
-    print("Durante um quiz, digite a letra da alternativa (A/B/C/D) ou 'cancelar'.\n")
+    print("\nSistema pronto. Digite sua mensagem abaixo.\n")
 
     while True:
         try:
-            # Indicador visual diferente quando quiz está ativo
-            prefixo = "[Quiz] " if agente.quiz_session else "Você"
-            user_input = input(f"{prefixo}: ").strip()
+            # Prompt visual diferente durante quiz
+            if agente.quiz_session is not None:
+                sess = agente.quiz_session
+                idx = sess.indice_atual + 1
+                total = len(sess.perguntas)
+                prefixo = f"[Quiz {idx}/{total}] Resposta"
+            else:
+                prefixo = "Você"
+
+            user_input = input(f"\n{prefixo}: ").strip()
         except (KeyboardInterrupt, EOFError):
             print("\n[JARVIS] Encerrando. Até logo!")
             break
 
         if not user_input:
             continue
+
+        # 'sair' só encerra fora do quiz (dentro do quiz, 'sair' cancela o quiz)
         if user_input.lower() in ("sair", "exit", "quit") and agente.quiz_session is None:
             print("[JARVIS] Encerrando. Até logo!")
             break
 
         resposta = agente.responder(user_input)
-        print(f"\nJARVIS:\n{resposta}\n")
+        print(f"\nJARVIS:\n{resposta}")
+
+        # Indica visualmente quando o quiz terminou
+        if agente.quiz_session is None and "Quiz finalizado" in resposta:
+            print("\n" + "-" * 55)
+            print("Quiz encerrado. Continue estudando! 📚")
+            print("-" * 55)
 
 
 if __name__ == "__main__":

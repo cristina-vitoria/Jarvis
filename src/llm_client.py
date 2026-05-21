@@ -62,7 +62,7 @@ def revisar_resposta_rag(pergunta: str, contexto: str, resposta: str) -> bool:
         {
             "role": "system",
             "content": (
-                "Você é um revisor rigoroso de respostas de sistemas RAG. "
+                "Você é um revisor de respostas de sistemas RAG. "
                 "Analise se a resposta gerada responde à pergunta do usuário "
                 "usando APENAS informações do contexto fornecido. "
                 "Responda SOMENTE com a palavra SIM ou NAO."

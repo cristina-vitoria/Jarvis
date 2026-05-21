@@ -24,6 +24,8 @@ LLM_BASE_URL = os.getenv("LLM_BASE_URL", "")
 LLM_API_KEY = os.getenv("LLM_API_KEY", "")
 MODEL_ID = os.getenv("MODEL_ID", "google/gemma-3-12b-it")
 MAX_NEW_TOKENS = int(os.getenv("MAX_NEW_TOKENS", "512"))
+# Timeout em segundos para chamadas ao LLM (aumentar se a API for lenta)
+LLM_TIMEOUT = int(os.getenv("LLM_TIMEOUT", "120"))
 
 # RAG
 CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", "700"))
