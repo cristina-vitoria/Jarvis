@@ -49,42 +49,6 @@ def gerar_resposta(messages: list, max_new_tokens: int = MAX_NEW_TOKENS) -> str:
     return resp.choices[0].message.content.strip()
 
 
-def revisar_resposta_rag(pergunta: str, contexto: str, resposta: str) -> bool:
-    """
-    Agente Revisor (Self-Correction): verifica se a resposta gerada
-    responde à pergunta usando apenas o contexto fornecido.
-
-    Returns:
-        True  → resposta aprovada (SIM).
-        False → resposta reprovada (NAO).
-    """
-    messages = [
-        {
-            "role": "system",
-            "content": (
-                "Você é um revisor de respostas de sistemas RAG. "
-                "Analise se a resposta gerada responde à pergunta do usuário "
-                "usando APENAS informações do contexto fornecido. "
-                "Responda SOMENTE com a palavra SIM ou NAO."
-            ),
-        },
-        {
-            "role": "user",
-            "content": (
-                f"Contexto:\n{contexto}\n\n"
-                f"Pergunta:\n{pergunta}\n\n"
-                f"Resposta gerada:\n{resposta}\n\n"
-                "A resposta usa apenas o contexto? SIM ou NAO."
-            ),
-        },
-    ]
-    try:
-        veredicto = gerar_resposta(messages, max_new_tokens=16).strip().upper()
-        return veredicto.startswith("SIM")
-    except Exception:
-        return True
-
-
 # ---------------------------------------------------------------------------
 # DECISÃO PELA LLM 
 # ---------------------------------------------------------------------------

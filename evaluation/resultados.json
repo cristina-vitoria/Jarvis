@@ -1,0 +1,209 @@
+[
+  {
+    "id": 1,
+    "tipo": "desconhecido",
+    "pergunta": "Qual é a definição de algoritmo apresentada e quais etapas são listadas para transformar um problema em um programa?",
+    "documentos_recuperados": [],
+    "resposta": "Olá! 😊\n\nCom base nos materiais de estudo, um **algoritmo** é basicamente um conjunto de instruções ou procedimentos, escritos em linguagem humana antes de serem transformados em código de programação.\n\nPara transformar um problema em um programa, as etapas são:\n\n1.  **Definir a solução do problema:** Entender bem o que precisa ser feito.\n2.  **Transcrever o algoritmo:** Escrever as instruções de forma organizada.\n3.  **Compilar e executar o programa:** Transformar o algoritmo em código e rodá-lo.\n\nEspero ter ajudado! Se tiver mais alguma dúvida, é só perguntar. 😉",
+    "classificacao": "correta",
+    "avaliado_em": "2026-05-24T13:38:14.253950"
+  },
+  {
+    "id": 2,
+    "tipo": "desconhecido",
+    "pergunta": "Quais são os principais tipos de estruturas de dados discutidos e quando cada um é indicado?",
+    "documentos_recuperados": [],
+    "resposta": "Olá! 😊\n\nDe acordo com os materiais que tenho acesso, os principais tipos de estruturas de dados discutidos são:\n\n*   **Vetor e Matriz:** São como caixas organizadas que guardam vários itens do mesmo tipo, todos reunidos sob um único nome.\n*   **Registro:** Permite que você agrupe itens de diferentes tipos (como texto, números, datas) sob um único nome, como se fosse uma ficha com várias informações.\n\nNo entanto, os materiais não detalham quando é mais adequado usar cada uma delas. Se você tiver mais informações sobre o contexto em que precisa usar essas estruturas de dados, posso tentar te ajudar a decidir! 😉",
+    "classificacao": "correta",
+    "avaliado_em": "2026-05-24T13:38:24.377789"
+  },
+  {
+    "id": 3,
+    "tipo": "desconhecido",
+    "pergunta": "Explique os operadores lógicos (AND, OR, NOT) e dê um exemplo prático de uso.",
+    "documentos_recuperados": [],
+    "resposta": "Olá! 😊\n\nVerifiquei nos materiais que tenho aqui, mas infelizmente não encontrei uma explicação sobre os operadores lógicos (AND, OR, NOT) nem um exemplo prático de uso. 😔\n\nPeço desculpas por não poder te ajudar com essa dúvida neste momento! Se você tiver outras perguntas sobre os temas que eu tenho acesso, é só perguntar! 😉",
+    "classificacao": "incorreta",
+    "avaliado_em": "2026-05-24T13:38:32.115101"
+  },
+  {
+    "id": 4,
+    "tipo": "desconhecido",
+    "pergunta": "Explique a diferença entre hardware e software.",
+    "documentos_recuperados": [],
+    "resposta": "Olá! 😊\n\nDe acordo com os materiais que tenho acesso, a diferença entre hardware e software é bem simples:\n\n*   **Hardware** é a parte física do computador, ou seja, tudo que você pode tocar: o monitor, o teclado, o mouse, a placa-mãe, o disco rígido, etc.\n*   **Software** é o conjunto de programas que fazem o computador funcionar, como o sistema operacional (Windows, macOS, Linux), aplicativos (Word, Chrome, jogos) e outros programas.\n\nEm resumo, o hardware é o corpo do computador, e o software é a \"mente\" que o faz funcionar! 😉",
+    "classificacao": "correta",
+    "avaliado_em": "2026-05-24T13:38:40.141976"
+  },
+  {
+    "id": 5,
+    "tipo": "desconhecido",
+    "pergunta": "Quais regras ou convenções de nomeação de variáveis e funções o documento recomenda?",
+    "documentos_recuperados": [],
+    "resposta": "Olá! 😊\n\nDe acordo com o material de estudo, a principal recomendação para nomear variáveis e funções é: **evite usar caracteres especiais ou palavras reservadas da linguagem**. \n\nEm outras palavras, escolha nomes claros e que façam sentido, mas sem usar símbolos ou palavras que o computador já usa para outras funções! 😉",
+    "classificacao": "correta",
+    "avaliado_em": "2026-05-24T13:38:53.693403"
+  },
+  {
+    "id": 6,
+    "tipo": "desconhecido",
+    "pergunta": "Quais exemplos de estruturas de repetição (loops) aparecem e como cada uma difere em uso?",
+    "documentos_recuperados": [],
+    "resposta": "Olá! 😊\n\nConforme os materiais de estudo, as estruturas de repetição (loops) que aparecem são o comando `for` e o comando `while`.\n\nA principal diferença é que o `for` é uma forma mais simplificada do `while`. No `for`, você já define no próprio comando como a variável de controle (aquela que conta as repetições) é inicializada, quando ela deve parar e como ela é atualizada a cada repetição.\n\nJá o `while` testa uma condição antes de executar o bloco de comandos. É você quem controla a inicialização, o teste para ver se deve continuar e a atualização da variável de controle manualmente.\n\nEm resumo:\n\n*   **`for`**: Mais simples e direto quando você sabe exatamente quantas vezes precisa repetir.\n*   **`while`**: Mais flexível quando a repetição depende de uma condição que pode mudar durante o processo.\n\nEspero que essa explicação ajude! Se tiver mais alguma dúvida, é só perguntar. 😉",
+    "classificacao": "correta",
+    "avaliado_em": "2026-05-24T13:39:11.415078"
+  },
+  {
+    "id": 7,
+    "tipo": "desconhecido",
+    "pergunta": "Para que serve o comando scanf em C?",
+    "documentos_recuperados": [],
+    "resposta": "Olá! 😊\n\nO comando `scanf` em C serve para ler informações que você digita no teclado e guardar em variáveis do seu programa. Ele lê as informações como texto (cadeias de caracteres) até encontrar um espaço em branco, uma quebra de linha ou o fim do arquivo.\n\nÉ como se ele pegasse o que você digitou e guardasse em uma \"caixinha\" (variável) para o seu programa usar depois!\n\nUm detalhe importante é que ele adiciona automaticamente um caractere especial no final do texto que ele lê, para indicar o fim da \"caixinha\".\n\nEspero que tenha ficado mais claro! Se tiver mais alguma dúvida, é só perguntar. 😉",
+    "classificacao": "correta",
+    "avaliado_em": "2026-05-24T13:39:23.321491"
+  },
+  {
+    "id": 8,
+    "tipo": "desconhecido",
+    "pergunta": "Explique o comando switch.",
+    "documentos_recuperados": [],
+    "resposta": "Olá! 😊\n\nO comando `switch` é uma forma de simplificar a organização do seu código quando você precisa verificar se uma variável tem um valor específico e executar diferentes ações dependendo desse valor.\n\nImagine que você tem várias opções, tipo as teclas de um elevador. Em vez de usar vários `if` para verificar qual tecla foi apertada, o `switch` faz isso de forma mais organizada:\n\n*   Ele pega o valor de uma variável (que pode ser um número inteiro ou um caractere).\n*   Ele compara esse valor com várias opções (`case conteúdol:`, `case conteúdo2:`, etc.).\n*   Se encontrar uma opção que corresponde, ele executa o bloco de comandos dentro desse `case`.\n*   O `break` é importante para sair do `switch` depois de encontrar a opção certa, para não executar os outros casos acidentalmente.\n*   Se nenhum dos `case` corresponder ao valor da variável, o bloco `default:` é executado (é como se fosse a opção \"senão\").\n\nEm resumo, o `switch` ajuda a deixar o código mais limpo e fácil de entender quando você precisa tratar diferentes situações baseadas no valor de uma variável! 😉",
+    "classificacao": "correta",
+    "avaliado_em": "2026-05-24T13:39:48.186319"
+  },
+  {
+    "id": 9,
+    "tipo": "desconhecido",
+    "pergunta": "O que são cadeias de caracteres em C e como elas diferem de variáveis simples do tipo char?",
+    "documentos_recuperados": [],
+    "resposta": "Olá! 😊\n\nEntão, em C, tanto as cadeias de caracteres (strings) quanto as variáveis do tipo `char` lidam com texto, mas de formas diferentes:\n\n*   **`char` (variável simples):** Pense nela como uma \"caixinha\" que armazena apenas um único caractere, como uma letra, um número ou um símbolo. Por exemplo, você pode guardar a letra 'a' em uma variável `char`.\n*   **Cadeia de caracteres (string):** É como uma sequência de várias dessas \"caixinhas\" `char` juntas, formando uma palavra ou frase. Por exemplo, \"Olá, mundo!\" é uma string. Em C, uma string é, na verdade, um vetor (uma lista) de caracteres, e sempre termina com um caractere especial chamado `?` (que representa um \"fim de string\").\n\nEm resumo, `char` guarda um único caractere, enquanto uma string guarda uma sequência de caracteres! 😉",
+    "classificacao": "correta",
+    "avaliado_em": "2026-05-24T13:40:01.350517"
+  },
+  {
+    "id": 10,
+    "tipo": "desconhecido",
+    "pergunta": "Qual a complexidade de tempo dos algoritmos de ordenação apresentados?",
+    "documentos_recuperados": [],
+    "resposta": "Olá! 😊\n\nVerifiquei nos materiais que tenho acesso, mas infelizmente não encontrei informações sobre a complexidade de tempo dos algoritmos de ordenação. Parece que esse tópico não foi abordado nos documentos que estou utilizando no momento.\n\nPeço desculpas por não poder te ajudar com essa dúvida! Se tiver outras perguntas sobre os temas que eu tenho acesso, é só perguntar. 😉",
+    "classificacao": "incorreta",
+    "avaliado_em": "2026-05-24T13:40:10.225425"
+  },
+  {
+    "id": 11,
+    "tipo": "desconhecido",
+    "pergunta": "Em uma função, como os parâmetros podem ser passados?",
+    "documentos_recuperados": [],
+    "resposta": "Olá! 😊\n\nDe acordo com o que encontrei nos materiais, os parâmetros de uma função podem ser passados por **referência**.\n\nIsso significa que, em vez de a função receber uma cópia dos valores que você passa, ela recebe uma espécie de \"endereço\" desses valores. Por isso, se a função modificar esses valores, as mudanças serão refletidas diretamente nas variáveis originais que você passou como parâmetros.\n\nÉ como se a função estivesse trabalhando diretamente com os seus dados! 😉",
+    "classificacao": "parcialmente correta",
+    "avaliado_em": "2026-05-24T13:40:35.392859"
+  },
+  {
+    "id": 12,
+    "tipo": "desconhecido",
+    "pergunta": "O que é uma matriz e o que significa linearização de matrizes?",
+    "documentos_recuperados": [],
+    "resposta": "Olá! 😊\n\nUma **matriz**, basicamente, é uma forma organizada de guardar dados em linhas e colunas, como se fosse uma tabela. Os materiais que tenho acesso descrevem que ela tem operações para criar, destruir, trocar as linhas pelas colunas (transposição), ler os dados e mostrar na tela.\n\nJá a **linearização de matrizes** é uma técnica para transformar essa tabela em uma linha só, em um vetor. É como pegar todos os elementos da matriz e colocá-los um do lado do outro, formando uma longa lista. A fórmula `v[i] = m[l][c]` mostra como fazer essa conversão: você pega cada elemento da matriz (linha `l`, coluna `c`) e o coloca na posição `i` do vetor linearizado `v`.\n\nEspero que isso ajude a entender! Se tiver mais alguma dúvida, é só perguntar. 😉",
+    "classificacao": "correta",
+    "avaliado_em": "2026-05-24T13:40:52.570473"
+  },
+  {
+    "id": 13,
+    "tipo": "desconhecido",
+    "pergunta": "Quais técnicas de depuração (debugging) são sugeridas para encontrar falhas em programas?",
+    "documentos_recuperados": [],
+    "resposta": "Olá! 😊\n\nDe acordo com o material que tenho acesso, a principal técnica de depuração sugerida é **organizar o programa em funções**. Isso ajuda a evitar confusão e torna o código mais fácil de entender, o que facilita a identificação e correção de falhas. \n\nÉ como dividir um problema grande em pedaços menores e mais fáceis de resolver! 😉",
+    "classificacao": "correta",
+    "avaliado_em": "2026-05-24T13:41:10.216180"
+  },
+  {
+    "id": 14,
+    "tipo": "desconhecido",
+    "pergunta": "Quais maneiras de medir complexidade são introduzidas?",
+    "documentos_recuperados": [],
+    "resposta": "Olá! 😊\n\nOs materiais que tenho acesso apresentam duas formas principais de medir a complexidade de um algoritmo:\n\n*   **O(n log n):** Essa é a complexidade que geralmente esperamos encontrar no caso médio, ou seja, na maioria das situações em que o algoritmo é usado.\n*   **O(n²):** Essa é a complexidade que pode ocorrer no pior caso, quando o algoritmo tem que trabalhar com um volume muito grande de dados.\n\nEssas medidas nos ajudam a entender como o tempo de execução do algoritmo aumenta conforme o tamanho do problema (n) cresce.\n\nEspero que isso tenha deixado claro! Se tiver mais alguma dúvida, é só perguntar. 😉",
+    "classificacao": "parcialmente correta",
+    "avaliado_em": "2026-05-24T13:41:32.740892"
+  },
+  {
+    "id": 15,
+    "tipo": "desconhecido",
+    "pergunta": "Para que serve o comando printf em C?",
+    "documentos_recuperados": [],
+    "resposta": "Olá! 😊\n\nO comando `printf` em C serve para mostrar informações na tela! Ele permite que você imprima textos, números, e outros tipos de dados que o seu programa está processando. É como se fosse uma forma de o seu programa \"falar\" com você, mostrando o resultado do que ele está fazendo.\n\nEle funciona de forma parecida com o comando `fprintf`, que também pode ser usado para exibir informações, mas em um arquivo de texto.\n\nEspero que isso ajude a entender! Se tiver mais alguma dúvida, é só perguntar. 😉",
+    "classificacao": "correta",
+    "avaliado_em": "2026-05-24T13:41:44.860159"
+  },
+  {
+    "id": 16,
+    "tipo": "desconhecido",
+    "pergunta": "Quais vantagens cada estruturas compostas (arrays, listas etc) tem?",
+    "documentos_recuperados": [],
+    "resposta": "Olá! 😊\n\nPelo que pude consultar nos materiais que tenho acesso, a principal vantagem das **listas** é que elas são dinâmicas! Isso significa que o tamanho delas pode mudar durante a execução do seu programa. Diferente de outras estruturas, você não precisa definir o tamanho da lista no início.\n\nOs materiais não detalham vantagens de outras estruturas compostas como arrays, então por enquanto só tenho essa informação para te compartilhar!\n\nEspero que ajude! Se tiver mais alguma pergunta, é só fazer. 😉",
+    "classificacao": "parcialmente correta",
+    "avaliado_em": "2026-05-24T13:43:24.679840"
+  },
+  {
+    "id": 17,
+    "tipo": "desconhecido",
+    "pergunta": "Quais algoritmos de ordenação são mostrados e suas características essenciais?",
+    "documentos_recuperados": [],
+    "resposta": "Olá! 😊\n\nDe acordo com o material que tenho acesso, a aula apresenta três algoritmos de ordenação:\n\n*   **Ordenação por seleção:** Esse algoritmo percorre o vetor várias vezes, procurando o maior elemento e trocando-o com o elemento que está na última posição ainda não ordenada. É como escolher o maior elemento a cada rodada e colocá-lo no lugar certo.\n*   **Ordenação por inserção:** Esse algoritmo funciona como se você estivesse ordenando cartas de baralho na mão. Você pega cada carta e insere na posição correta em relação às cartas que já estão ordenadas.\n*   **Ordenação por permutação:** Este método envolve trocar os elementos para colocá-los em ordem.\n\nEspero que isso ajude a entender as diferenças entre eles! Se tiver mais alguma dúvida, é só perguntar. 😉",
+    "classificacao": "correta",
+    "avaliado_em": "2026-05-24T13:43:43.597355"
+  },
+  {
+    "id": 18,
+    "tipo": "desconhecido",
+    "pergunta": "Quais formatos de I/O são cobertos e um exemplo de leitura e escrita mostrado?",
+    "documentos_recuperados": [],
+    "resposta": "Olá! 😊\n\nVerifiquei nos materiais que tenho acesso, mas infelizmente não encontrei informações sobre formatos de I/O cobertos nem exemplos de leitura e escrita. Parece que esse tópico não foi abordado nos documentos que estou utilizando no momento.\n\nPeço desculpas por não poder te ajudar com essa dúvida neste momento! Se tiver outras perguntas sobre os temas que eu tenho acesso, é só perguntar. 😉",
+    "classificacao": "incorreta",
+    "avaliado_em": "2026-05-24T13:45:47.846068"
+  },
+  {
+    "id": 19,
+    "tipo": "desconhecido",
+    "pergunta": "Que diferenças o material aponta entre solução humana e execução por computador?",
+    "documentos_recuperados": [],
+    "resposta": "Olá! 😊\n\nDe acordo com o material que tenho acesso, a grande diferença entre como a gente resolve um problema e como um computador faz é que nós, humanos, pensamos na solução de forma mais abstrata. Já para o computador, essa solução precisa ser transformada em um algoritmo, que é um conjunto de instruções bem detalhadas. E esse algoritmo é então traduzido para a linguagem de programação que o computador entende, formando o programa que ele vai executar!\n\nÉ como se a gente tivesse a ideia geral, e o computador precisa de um \"mapa\" super detalhado para chegar lá. 😉",
+    "classificacao": "correta",
+    "avaliado_em": "2026-05-24T13:46:15.148969"
+  },
+  {
+    "id": 20,
+    "tipo": "desconhecido",
+    "pergunta": "Como o material define e exemplifica memória principal versus memória secundária?",
+    "documentos_recuperados": [],
+    "resposta": "Olá! 😊\n\nEntão, de acordo com o que eu encontrei nos materiais, a diferença entre memória principal e memória secundária é bem simples:\n\n*   **Memória principal (RAM):** É como a \"mesa de trabalho\" do seu computador. A CPU (o cérebro do computador) usa ela para guardar as instruções e as informações que precisa usar naquele momento, enquanto o computador está ligado. É rápida, mas quando você desliga o computador, tudo que está lá desaparece.\n\n*   **Memória secundária:** É como um \"armário\" onde você guarda seus arquivos e programas para sempre, mesmo quando o computador está desligado. Exemplos são o disco rígido (onde você instala o Windows e seus programas) e pendrives. Ela tem muito mais espaço de armazenamento que a memória principal, mas é mais lenta para acessar as informações.\n\nEntendeu a diferença? A memória principal é para o trabalho imediato, e a memória secundária é para guardar as coisas a longo prazo! 😉",
+    "classificacao": "correta",
+    "avaliado_em": "2026-05-24T13:46:32.731011"
+  },
+  {
+    "id": 21,
+    "tipo": "desconhecido",
+    "pergunta": "Quem foi Alan Turing e qual foi sua contribuição para a ciência da computação?",
+    "documentos_recuperados": [],
+    "resposta": "Olá! 😊\n\nVerifiquei nos materiais que tenho acesso e, infelizmente, não encontrei nenhuma informação sobre Alan Turing ou suas contribuições para a ciência da computação. Parece que esse tópico não foi abordado nas aulas.\n\nSinto muito não poder te ajudar com essa pergunta no momento!",
+    "classificacao": "correta",
+    "avaliado_em": "2026-05-24T13:47:08.298289"
+  },
+  {
+    "id": 22,
+    "tipo": "desconhecido",
+    "pergunta": "O que é a máquina de Turing e por que ela é importante para a teoria da computação?",
+    "documentos_recuperados": [],
+    "resposta": "Olá! 😊\n\nProcurei nos materiais que tenho acesso, mas infelizmente não encontrei nenhuma informação sobre a Máquina de Turing ou sua importância para a teoria da computação. Parece que esse tópico não foi abordado nas aulas que estou utilizando para responder suas perguntas.\n\nSinto muito não poder te ajudar com essa pergunta específica no momento!",
+    "classificacao": "correta",
+    "avaliado_em": "2026-05-24T13:47:15.910024"
+  },
+  {
+    "id": 23,
+    "tipo": "desconhecido",
+    "pergunta": "Quais são os principais tipos de linguagens de programação e suas características distintivas?",
+    "documentos_recuperados": [],
+    "resposta": "Olá! 😊\n\nEntão, existem basicamente três tipos principais de linguagens de programação, cada uma com suas características:\n\n*   **Linguagens de Alto Nível:** São as mais comuns e fáceis de aprender, porque usam palavras e símbolos que se parecem mais com a linguagem humana. Elas não dependem de um tipo específico de computador, o que significa que um programa escrito em uma linguagem de alto nível pode rodar em diferentes máquinas. Exemplos: Python, Java, C, entre outras.\n\n*   **Linguagens de Baixo Nível:** São mais próximas da linguagem que o computador entende (a linguagem de máquina), e usam mnemônicos (abreviações) para representar as instruções. São mais difíceis de programar, mas podem ser mais eficientes em algumas situações. Um exemplo é a linguagem Assembly.\n\n*   **Linguagens de Máquina:** São o código binário (sequências de 0s e 1s) que o computador executa diretamente. São muito difíceis de entender e programar diretamente por humanos!\n\nEspero que essa explicação tenha sido clara! Se tiver mais alguma dúvida, é só perguntar. 😉",
+    "classificacao": "incorreta",
+    "avaliado_em": "2026-05-24T13:49:02.260545"
+  }
+]
