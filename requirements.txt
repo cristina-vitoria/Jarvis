@@ -3,7 +3,7 @@ openai>=1.30.0
 
 # ── RAG ─────────────────────────────────────────────────────────────────────
 sentence-transformers>=2.7.0
-faiss>=1.5.3
+faiss-cpu>=1.8.0
 
 # ── Extração de PDF ─────────────────────────────────────────────────────────
 # PyMuPDF: extração nativa de texto com estrutura (headings via fonte)
