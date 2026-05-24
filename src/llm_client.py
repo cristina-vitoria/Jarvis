@@ -24,7 +24,7 @@ def _get_client() -> OpenAI:
                     base_url=LLM_BASE_URL,
                     api_key=LLM_API_KEY,
                     timeout=LLM_TIMEOUT,
-                    max_retries=2,
+                    max_retries=1,
                 )
     return _client
 
@@ -71,8 +71,8 @@ def revisar_resposta_rag(pergunta: str, contexto: str, resposta: str) -> bool:
         {
             "role": "user",
             "content": (
-                f"Contexto fornecido ao sistem:\n{contexto}\n\n"
-                f"Pergunta do usuário:\n{pergunta}\n\n"
+                f"Contexto:\n{contexto}\n\n"
+                f"Pergunta:\n{pergunta}\n\n"
                 f"Resposta gerada:\n{resposta}\n\n"
                 "A resposta usa apenas o contexto? SIM ou NAO."
             ),

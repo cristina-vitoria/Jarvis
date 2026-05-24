@@ -9,14 +9,21 @@ load_dotenv()
 # Caminhos
 ROOT_PATH = Path(__file__).parent.parent
 DATA_PATH = ROOT_PATH / "data"
+
+# data/docs  — PDFs originais carregados pelo usuário (input do script de extração)
 DOCS_PATH = DATA_PATH / "docs"
+
+# data/docsmd — Markdown limpo gerado por data/scripts/extract_pdf.py
+#               É A ÚNICA fonte lida pelo RAG.
+DOCSMD_PATH = DATA_PATH / "docsmd"
+
 LOGS_PATH = ROOT_PATH / "logs"
 AGENDA_PATH = DATA_PATH / "agenda.json"
 TAREFAS_PATH = DATA_PATH / "tarefas.json"
 TOOL_LOG_PATH = LOGS_PATH / "tool_calls.jsonl"
 
 # Garante que as pastas existem
-for p in [DATA_PATH, DOCS_PATH, LOGS_PATH]:
+for p in [DATA_PATH, DOCS_PATH, DOCSMD_PATH, LOGS_PATH]:
     p.mkdir(parents=True, exist_ok=True)
 
 # LLM — API compatível com OpenAI

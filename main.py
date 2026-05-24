@@ -12,14 +12,18 @@ from src.agent import JarvisAgent
 from src.rag.loader import carregar_documentos
 from src.rag.chunker import chunk_documentos
 from src.rag.vectorstore import construir_vectorstore
-from src.config import DOCS_PATH
+from src.config import DOCSMD_PATH
 
 
 def inicializar_rag():
-    """Carrega, chunka e indexa todos os documentos da pasta data/docs/."""
-    documentos = carregar_documentos(DOCS_PATH)
+    """Carrega, chunka e indexa todos os .md de data/docsmd/."""
+    documentos = carregar_documentos(DOCSMD_PATH)
     if not documentos:
-        print("[JARVIS] Nenhum documento encontrado em data/docs/. O RAG estará desabilitado.")
+        print(
+            "[JARVIS] Nenhum documento encontrado em data/docsmd/.\n"
+            "[JARVIS] Execute: python data/scripts/extract_pdf.py\n"
+            "[JARVIS] O RAG estará desabilitado até lá."
+        )
         return None
     chunks = chunk_documentos(documentos)
     vectorstore = construir_vectorstore(chunks)
@@ -41,7 +45,6 @@ def main():
 
     while True:
         try:
-            # Prompt visual diferente durante quiz
             if agente.quiz_session is not None:
                 sess = agente.quiz_session
                 idx = sess.indice_atual + 1
@@ -58,7 +61,6 @@ def main():
         if not user_input:
             continue
 
-        # 'sair' só encerra fora do quiz (dentro do quiz, 'sair' cancela o quiz)
         if user_input.lower() in ("sair", "exit", "quit") and agente.quiz_session is None:
             print("[JARVIS] Encerrando. Até logo!")
             break
@@ -66,7 +68,6 @@ def main():
         resposta = agente.responder(user_input)
         print(f"\nJARVIS:\n{resposta}")
 
-        # Indica visualmente quando o quiz terminou
         if agente.quiz_session is None and "Quiz finalizado" in resposta:
             print("\n" + "-" * 55)
             print("Quiz encerrado. Continue estudando! 📚")
