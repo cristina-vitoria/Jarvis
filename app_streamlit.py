@@ -160,6 +160,38 @@ def processar_upload_pdf(
         raise RuntimeError(f"Não foi possível extrair texto do PDF: {e}") from e
 
 
+# ---------------------------------------------------------------------------
+# Helper: apaga .md, .metadata.json e o PDF original de um documento
+# ---------------------------------------------------------------------------
+
+def _remover_documento(stem: str, docsmd_path: Path, docs_path: Path) -> None:
+    """Remove os três arquivos associados a um documento (md, metadata, pdf)."""
+
+    # 1. Remove o .md
+    md_file = docsmd_path / (stem + ".md")
+    md_file.unlink(missing_ok=True)
+
+    # 2. Tenta descobrir o nome original do PDF a partir do metadata
+    meta_file = docsmd_path / (stem + ".metadata.json")
+    pdf_nome = stem + ".pdf"  # fallback: mesmo nome do stem
+    if meta_file.exists():
+        try:
+            m = json.loads(meta_file.read_text(encoding="utf-8"))
+            # source_pdf pode conter apenas o nome ou o caminho completo
+            source = m.get("source_pdf", "")
+            if source:
+                pdf_nome = Path(source).name
+        except Exception:
+            pass
+        meta_file.unlink(missing_ok=True)
+    else:
+        meta_file.unlink(missing_ok=True)  # garante remoção mesmo se o try pulou
+
+    # 3. Remove o PDF original em data/docs/
+    pdf_original = docs_path / pdf_nome
+    pdf_original.unlink(missing_ok=True)
+
+
 # ==================== SIDEBAR ====================
 with st.sidebar:
     st.markdown('<p class="main-header">🎓 JARVIS</p>', unsafe_allow_html=True)
@@ -295,13 +327,7 @@ with st.sidebar:
                 st.markdown(f"🟢 **{d.stem}** `{tooltip}`")
             with col_x:
                 if st.button("✕", key=f"del_{d.name}", help=f"Remover {d.stem}"):
-                    for ext in (".md", ".metadata.json"):
-                        f = docsmd_path / (d.stem + ext)
-                        if f.exists():
-                            f.unlink()
-                    pdf_original = docs_path / (d.stem + ".pdf")
-                    if pdf_original.exists():
-                        pdf_original.unlink()
+                    _remover_documento(d.stem, docsmd_path, docs_path)
                     if st.session_state["rag_carregado"]:
                         st.cache_resource.clear()
                         st.session_state["rag_carregado"] = False
