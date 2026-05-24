@@ -1,19 +1,17 @@
-"""Ferramenta de RAG: recupera chunks e gera resposta fundamentada.
+"""Ferramentas de RAG: recuperação de conteúdo e listagem de documentos.
 
-Importa o revisor de `llm_client` para aplicar self-correction antes
-de retornar a resposta final ao usuário.
+Funções exportadas:
+    buscar_material_rag(pergunta, vectorstore, llm_fn) -> str
 """
 
 from src.rag.retriever import recuperar
 
-MAX_RETRIES = 2  # Número máximo de tentativas de regeração
-
-SCORE_MINIMO = 0.30   # abaixo disso, o chunk é irrelevante
+SCORE_MINIMO = 0.30   # abaixo disso o chunk é considerado irrelevante
 
 
 def buscar_material_rag(pergunta: str, vectorstore, llm_fn) -> str:
     """
-    Recupera trechos relevantes dos materiais de estudo e gera uma resposta
+    Recupera trechos relevantes dos materiais de estudo e gera uma resposta.
 
     Args:
         pergunta: pergunta acadêmica do usuário.
@@ -21,29 +19,46 @@ def buscar_material_rag(pergunta: str, vectorstore, llm_fn) -> str:
         llm_fn: função que recebe lista de mensagens e retorna string.
 
     Returns:
-        Resposta gerada e validada com base nos documentos recuperados.
+        Resposta gerada com base nos documentos recuperados.
     """
     chunks = recuperar(pergunta, vectorstore)
-
-    # Filtra chunks com score baixo — mais confiável que um revisor LLM
     chunks = [c for c in chunks if c.get("score", 0) >= SCORE_MINIMO]
 
     if not chunks:
         return "Não encontrei trechos suficientemente relevantes nos materiais."
 
     contexto = "\n\n---\n\n".join(
-        f"[Fonte: {c['fonte']}]\n{c['texto']}" for c in chunks
+        f"[Fonte: {_label_chunk(c)}]\n{c['texto']}" for c in chunks
     )
-    fontes = list({c["fonte"] for c in chunks})
+
+    # Fontes únicas — usa title quando disponível, senão nome do arquivo
+    fontes_unicas = list({
+        _label_chunk(c): None for c in chunks
+    }.keys())
 
     messages = [
-        {"role": "system", "content": (
-            "Você é um assistente acadêmico. Responda usando APENAS o contexto. Não invente."
-            "Se a resposta não estiver no contexto, diga isso claramente. "
-            "Cite as fontes ao final."
-        )},
-        {"role": "user", "content": f"Contexto:\n{contexto}\n\nPergunta: {pergunta}"},
+        {
+            "role": "system",
+            "content": (
+                "Você é um assistente acadêmico. Responda usando APENAS o contexto fornecido. "
+                "Não invente informações. Se a resposta não estiver no contexto, diga isso claramente. "
+                "Cite as fontes ao final."
+            ),
+        },
+        {
+            "role": "user",
+            "content": f"Contexto:\n{contexto}\n\nPergunta: {pergunta}",
+        },
     ]
 
     resposta = llm_fn(messages)
-    return f"{resposta}\n\n📚 Fontes consultadas: {', '.join(fontes)}"
+    return f"{resposta}\n\n📚 Fontes consultadas: {', '.join(fontes_unicas)}"
+
+
+# ---------------------------------------------------------------------------
+# Helpers internos
+# ---------------------------------------------------------------------------
+
+def _label_chunk(chunk: dict) -> str:
+    """Retorna o rótulo de exibição de um chunk: title se disponível, senão fonte."""
+    return chunk.get("title") or chunk.get("fonte", "desconhecido")
