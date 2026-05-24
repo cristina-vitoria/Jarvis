@@ -1,0 +1,18 @@
+{
+  "doc_id": "aula3",
+  "title": "Aula3",
+  "source_pdf": "aula3.pdf",
+  "markdown_file": "aula3.md",
+  "num_pages": 3,
+  "topicos_detectados": [
+    "Constantes",
+    "Definindo novos tipos",
+    "Operações lógicas e expressões",
+    "Funções matemáticas e resto da divisão inteira",
+    "Endereço das variáveis"
+  ],
+  "parser": "PyMuPDF (fitz) + Tesseract OCR",
+  "ocr_utilizado": true,
+  "extraido_em": "2026-05-24T19:00:39Z",
+  "chunking": "src/rag/chunker.py"
+}

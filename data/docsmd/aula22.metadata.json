@@ -1,0 +1,15 @@
+{
+  "doc_id": "aula22",
+  "title": "Aula22",
+  "source_pdf": "aula22.pdf",
+  "markdown_file": "aula22.md",
+  "num_pages": 4,
+  "topicos_detectados": [
+    "Listas",
+    "Exercício"
+  ],
+  "parser": "PyMuPDF (fitz) + Tesseract OCR",
+  "ocr_utilizado": true,
+  "extraido_em": "2026-05-24T19:00:16Z",
+  "chunking": "src/rag/chunker.py"
+}

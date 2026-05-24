@@ -1,47 +1,47 @@
 [
   {
     "id": 1,
-    "pergunta": "O que é um algoritmo segundo o material de MC102?"
+    "pergunta": "Qual é a definição de algoritmo apresentada e quais etapas são listadas para transformar um problema em um programa?"
   },
   {
     "id": 2,
-    "pergunta": "Explique a diferença entre hardware e software."
+    "pergunta": "Quais são os principais tipos de estruturas de dados discutidos e quando cada um é indicado?"
   },
   {
     "id": 3,
-    "pergunta": "Qual é a diferença entre compilador e interpretador?"
+    "pergunta": "Explique os operadores lógicos (AND, OR, NOT) e dê um exemplo prático de uso."
   },
   {
     "id": 4,
-    "pergunta": "Para que serve o comando scanf em C?"
+    "pergunta": "Explique a diferença entre hardware e software."
   },
   {
     "id": 5,
-    "pergunta": "Para que serve o comando printf em C?"
+    "pergunta": "Quais regras ou convenções de nomeação de variáveis e funções o documento recomenda?"
   },
   {
     "id": 6,
-    "pergunta": "Explique a diferença entre if simples e if-else."
+    "pergunta": "Quais exemplos de estruturas de repetição (loops) aparecem e como cada uma difere em uso?"
   },
   {
     "id": 7,
-    "pergunta": "Qual é a diferença entre os comandos while, do-while e for?"
+    "pergunta": "Para que serve o comando scanf em C?"
   },
   {
     "id": 8,
-    "pergunta": "O que significa o operador de resto da divisão inteira em C e como ele pode ser usado?"
+    "pergunta": "Explique o comando switch."
   },
   {
     "id": 9,
-    "pergunta": "Explique o conceito de vetor e cite duas operações ou algoritmos vistos para vetores."
+    "pergunta": "O que são cadeias de caracteres em C e como elas diferem de variáveis simples do tipo char?"
   },
   {
     "id": 10,
-    "pergunta": "Qual é a diferença entre busca linear e busca binária?"
+    "pergunta": "Qual a complexidade de tempo dos algoritmos de ordenação apresentados?"
   },
   {
     "id": 11,
-    "pergunta": "Explique como funcionam os algoritmos de ordenação por seleção, inserção e permutação."
+    "pergunta": "Em uma função, como os parâmetros podem ser passados?"
   },
   {
     "id": 12,
@@ -49,14 +49,46 @@
   },
   {
     "id": 13,
-    "pergunta": "O que são cadeias de caracteres em C e como elas diferem de variáveis simples do tipo char?"
+    "pergunta": "Quais técnicas de depuração (debugging) são sugeridas para encontrar falhas em programas?"
   },
   {
     "id": 14,
-    "pergunta": "Explique a diferença entre passagem de parâmetros por valor e por referência."
+    "pergunta": "Quais maneiras de medir complexidade são introduzidas?"
   },
   {
     "id": 15,
-    "pergunta": "O que é recursão e em que tipo de problema ela pode ser útil?"
+    "pergunta": "Para que serve o comando printf em C?"
+  },
+  {
+    "id": 16,
+    "pergunta": "Quais vantagens cada estruturas compostas (arrays, listas etc) tem?"
+  },
+  {
+    "id": 17,
+    "pergunta": "Quais algoritmos de ordenação são mostrados e suas características essenciais?"
+  },
+  {
+    "id": 18,
+    "pergunta": "Quais formatos de I/O são cobertos e um exemplo de leitura e escrita mostrado?"
+  },
+  {
+    "id": 19,
+    "pergunta": "Que diferenças o material aponta entre solução humana e execução por computador?"
+  },
+  {
+    "id": 20,
+    "pergunta": "Como o material define e exemplifica memória principal versus memória secundária?"
+  },
+  {
+    "id": 21,
+    "pergunta": "Quem foi Alan Turing e qual foi sua contribuição para a ciência da computação?"
+  },
+  {
+    "id": 22,
+    "pergunta": "O que é a máquina de Turing e por que ela é importante para a teoria da computação?"
+  },
+  {
+    "id": 23,
+    "pergunta": "Quais são os principais tipos de linguagens de programação e suas características distintivas?"
   }
 ]

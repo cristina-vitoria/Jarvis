@@ -1,0 +1,18 @@
+{
+  "doc_id": "aula10",
+  "title": "Aula10",
+  "source_pdf": "aula10.pdf",
+  "markdown_file": "aula10.md",
+  "num_pages": 4,
+  "topicos_detectados": [
+    "Ordenação",
+    "Ordenação por seleção",
+    "Ordenação por inserção",
+    "Ordenação por permutação",
+    "Exercícios"
+  ],
+  "parser": "PyMuPDF (fitz) + Tesseract OCR",
+  "ocr_utilizado": true,
+  "extraido_em": "2026-05-24T18:59:19Z",
+  "chunking": "src/rag/chunker.py"
+}

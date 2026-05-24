@@ -1,0 +1,16 @@
+{
+  "doc_id": "aula5",
+  "title": "Aula5",
+  "source_pdf": "aula5.pdf",
+  "markdown_file": "aula5.md",
+  "num_pages": 3,
+  "topicos_detectados": [
+    "Estrutura condicional simples",
+    "Estrutura condicional composta",
+    "Exercícios"
+  ],
+  "parser": "PyMuPDF (fitz) + Tesseract OCR",
+  "ocr_utilizado": true,
+  "extraido_em": "2026-05-24T19:00:47Z",
+  "chunking": "src/rag/chunker.py"
+}

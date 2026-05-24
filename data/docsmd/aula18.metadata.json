@@ -1,0 +1,15 @@
+{
+  "doc_id": "aula18",
+  "title": "Aula18",
+  "source_pdf": "aula18.pdf",
+  "markdown_file": "aula18.md",
+  "num_pages": 4,
+  "topicos_detectados": [
+    "Recursão",
+    "Exercícios"
+  ],
+  "parser": "PyMuPDF (fitz) + Tesseract OCR",
+  "ocr_utilizado": true,
+  "extraido_em": "2026-05-24T18:59:44Z",
+  "chunking": "src/rag/chunker.py"
+}

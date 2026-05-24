@@ -55,6 +55,9 @@ _OCR_DPI_FACTOR = 2.5
 # Língua padrão para o Tesseract
 _OCR_LANG = "por+eng"
 
+# Caracteres de "ruído" típicos de fontes Type3 do LaTeX com encoding errado
+_TYPE3_NOISE_CHARS = frozenset("{}|~")
+
 
 # ---------------------------------------------------------------------------
 # Detecção de texto corrompido
@@ -70,8 +73,37 @@ def _ascii_ratio(text: str) -> float:
 
 
 def _is_garbled(text: str) -> bool:
-    """Retorna True se o texto contém encoding corrompido (Type 3 / scan sem OCR)."""
-    return _ascii_ratio(text) < _ASCII_RATIO_THRESHOLD
+    """
+    Retorna True se o texto está corrompido, usando três sinais independentes:
+
+    1. ASCII ratio baixo  → bytes binários / nulos 
+    2. Control char ratio → bytes de controle < 0x20 embutidos (Type3 raw bytes)
+    3. Noise char ratio   → excesso de { } | ~ típicos do mis-encoding LaTeX
+
+    Qualquer sinal isolado é suficiente para declarar a página corrompida.
+    """
+    stripped = text.replace("\n", "").replace(" ", "")
+    if not stripped:
+        return True
+
+    total = len(stripped)
+
+    # Sinal 1: proporção de ASCII imprimível abaixo do limiar
+    printable_ascii = sum(1 for c in stripped if c.isprintable() and ord(c) < 128)
+    if (printable_ascii / total) < _ASCII_RATIO_THRESHOLD:
+        return True
+
+    # Sinal 2: caracteres de controle (< 0x20, exceto \t) acima de 3 %
+    ctrl_count = sum(1 for c in stripped if ord(c) < 32 and c != "\t")
+    if (ctrl_count / total) > 0.03:
+        return True
+
+    # Sinal 3: ruído de encoding LaTeX Type3 — { } | ~ acima de 5 %
+    noise_count = sum(1 for c in stripped if c in _TYPE3_NOISE_CHARS)
+    if (noise_count / total) > 0.05:
+        return True
+
+    return False
 
 
 # ---------------------------------------------------------------------------
@@ -205,7 +237,7 @@ def _clean_text(raw: str) -> str:
     """Remove ruídos comuns de PDF sem apagar conteúdo legítimo."""
     # Remove linhas que contêm APENAS dígitos isolados (típico rodapé de página),
     # mas somente se estiverem entre linhas em branco — evita apagar anos ou valores.
-    raw = re.sub(r"(?m)(?:^|\n)[ \t]*(\d{1,4})[ \t]*(?=\n\n|\n$|$)", "", raw)
+    raw = re.sub(r"(?m)(?:^|\n)[ \t]*(\d+)[ \t]*(?=\n\n|\n$|$)", "", raw)
     # Colapsa 3+ linhas em branco consecutivas em duas
     raw = re.sub(r"\n{3,}", "\n\n", raw)
     return raw.strip()

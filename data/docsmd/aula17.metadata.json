@@ -1,0 +1,14 @@
+{
+  "doc_id": "aula17",
+  "title": "Aula17",
+  "source_pdf": "aula17.pdf",
+  "markdown_file": "aula17.md",
+  "num_pages": 4,
+  "topicos_detectados": [
+    "Hierarquia entre funções"
+  ],
+  "parser": "PyMuPDF (fitz) + Tesseract OCR",
+  "ocr_utilizado": true,
+  "extraido_em": "2026-05-24T18:59:39Z",
+  "chunking": "src/rag/chunker.py"
+}

@@ -1,0 +1,15 @@
+{
+  "doc_id": "aula21",
+  "title": "Aula21",
+  "source_pdf": "aula21.pdf",
+  "markdown_file": "aula21.md",
+  "num_pages": 5,
+  "topicos_detectados": [
+    "Alocando memória para matrizes",
+    "Outras formas de manipulação de apontadores duplos"
+  ],
+  "parser": "PyMuPDF (fitz) + Tesseract OCR",
+  "ocr_utilizado": true,
+  "extraido_em": "2026-05-24T19:00:11Z",
+  "chunking": "src/rag/chunker.py"
+}

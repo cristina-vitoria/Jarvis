@@ -1,0 +1,14 @@
+{
+  "doc_id": "aula7",
+  "title": "Aula7",
+  "source_pdf": "aula7.pdf",
+  "markdown_file": "aula7.md",
+  "num_pages": 3,
+  "topicos_detectados": [
+    "Comando for"
+  ],
+  "parser": "PyMuPDF (fitz) + Tesseract OCR",
+  "ocr_utilizado": true,
+  "extraido_em": "2026-05-24T19:00:56Z",
+  "chunking": "src/rag/chunker.py"
+}

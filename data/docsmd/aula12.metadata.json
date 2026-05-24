@@ -1,0 +1,23 @@
+{
+  "doc_id": "aula12",
+  "title": "Aula12",
+  "source_pdf": "aula12.pdf",
+  "markdown_file": "aula12.md",
+  "num_pages": 5,
+  "topicos_detectados": [
+    "MC102 - Algoritmos e Progra¸c˜ao de Computador",
+    "1",
+    "Vetores Multidimensionais",
+    "...",
+    "2",
+    "Lineariza¸c˜ao de Matrizes",
+    "3",
+    "Exerc´ıcios",
+    "Escreva um programa para calcular a transposta de uma matriz.",
+    "Escreva um programa para inverter uma matriz."
+  ],
+  "parser": "PyMuPDF (fitz)",
+  "ocr_utilizado": false,
+  "extraido_em": "2026-05-24T18:59:19Z",
+  "chunking": "src/rag/chunker.py"
+}

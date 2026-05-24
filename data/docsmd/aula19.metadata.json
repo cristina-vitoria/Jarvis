@@ -1,0 +1,16 @@
+{
+  "doc_id": "aula19",
+  "title": "Aula19",
+  "source_pdf": "aula19.pdf",
+  "markdown_file": "aula19.md",
+  "num_pages": 3,
+  "topicos_detectados": [
+    "Ordenação por indução fraca",
+    "Ordenação por indução forte",
+    "Exercícios"
+  ],
+  "parser": "PyMuPDF (fitz) + Tesseract OCR",
+  "ocr_utilizado": true,
+  "extraido_em": "2026-05-24T18:59:48Z",
+  "chunking": "src/rag/chunker.py"
+}

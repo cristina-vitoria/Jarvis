@@ -1,0 +1,14 @@
+{
+  "doc_id": "aula23",
+  "title": "Aula23",
+  "source_pdf": "aula23.pdf",
+  "markdown_file": "aula23.md",
+  "num_pages": 4,
+  "topicos_detectados": [
+    "Arquivo texto"
+  ],
+  "parser": "PyMuPDF (fitz) + Tesseract OCR",
+  "ocr_utilizado": true,
+  "extraido_em": "2026-05-24T19:00:20Z",
+  "chunking": "src/rag/chunker.py"
+}

@@ -1,0 +1,17 @@
+{
+  "doc_id": "aula2",
+  "title": "Aula2",
+  "source_pdf": "aula2.pdf",
+  "markdown_file": "aula2.md",
+  "num_pages": 4,
+  "topicos_detectados": [
+    "Variáveis simples",
+    "Atribuições",
+    "Operações aritméticas e expressões",
+    "Exercício"
+  ],
+  "parser": "PyMuPDF (fitz) + Tesseract OCR",
+  "ocr_utilizado": true,
+  "extraido_em": "2026-05-24T18:59:55Z",
+  "chunking": "src/rag/chunker.py"
+}

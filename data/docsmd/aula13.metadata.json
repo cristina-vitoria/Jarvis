@@ -1,0 +1,16 @@
+{
+  "doc_id": "aula13",
+  "title": "Aula13",
+  "source_pdf": "aula13.pdf",
+  "markdown_file": "aula13.md",
+  "num_pages": 3,
+  "topicos_detectados": [
+    "Cadeias de Caracteres",
+    "Lendo da entrada padrão",
+    "Convertendo cadeias em números, e vice-versa"
+  ],
+  "parser": "PyMuPDF (fitz) + Tesseract OCR",
+  "ocr_utilizado": true,
+  "extraido_em": "2026-05-24T18:59:24Z",
+  "chunking": "src/rag/chunker.py"
+}

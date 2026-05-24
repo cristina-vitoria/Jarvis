@@ -1,0 +1,16 @@
+{
+  "doc_id": "aula14",
+  "title": "Aula14",
+  "source_pdf": "aula14.pdf",
+  "markdown_file": "aula14.md",
+  "num_pages": 4,
+  "topicos_detectados": [
+    "Convertendo cadeias em números, e vice-versa (cont.)",
+    "Manipulando cadeias de caracteres",
+    "Exercício"
+  ],
+  "parser": "PyMuPDF (fitz) + Tesseract OCR",
+  "ocr_utilizado": true,
+  "extraido_em": "2026-05-24T18:59:28Z",
+  "chunking": "src/rag/chunker.py"
+}

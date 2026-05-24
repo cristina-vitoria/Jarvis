@@ -1,0 +1,14 @@
+{
+  "doc_id": "aula8",
+  "title": "Aula8",
+  "source_pdf": "aula8.pdf",
+  "markdown_file": "aula8.md",
+  "num_pages": 6,
+  "topicos_detectados": [
+    "Comando Switch"
+  ],
+  "parser": "PyMuPDF (fitz) + Tesseract OCR",
+  "ocr_utilizado": true,
+  "extraido_em": "2026-05-24T19:01:02Z",
+  "chunking": "src/rag/chunker.py"
+}

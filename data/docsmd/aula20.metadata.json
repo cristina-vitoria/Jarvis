@@ -1,0 +1,16 @@
+{
+  "doc_id": "aula20",
+  "title": "Aula20",
+  "source_pdf": "aula20.pdf",
+  "markdown_file": "aula20.md",
+  "num_pages": 7,
+  "topicos_detectados": [
+    "Declarando e manipulando apontadores",
+    "Alocando memória para vetores",
+    "Alocando memória para estruturas abstratas"
+  ],
+  "parser": "PyMuPDF (fitz) + Tesseract OCR",
+  "ocr_utilizado": true,
+  "extraido_em": "2026-05-24T19:00:05Z",
+  "chunking": "src/rag/chunker.py"
+}

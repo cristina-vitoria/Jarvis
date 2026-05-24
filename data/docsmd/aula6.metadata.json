@@ -1,0 +1,20 @@
+{
+  "doc_id": "aula6",
+  "title": "Aula6",
+  "source_pdf": "aula6.pdf",
+  "markdown_file": "aula6.md",
+  "num_pages": 4,
+  "topicos_detectados": [
+    "Comando do while",
+    "Leia men.",
+    "Façare mey+e-n.",
+    "Volte para a linha 3 enquanto r £ 0.",
+    "Diga que x é o MDC de men.",
+    "Comando while",
+    "Exercício"
+  ],
+  "parser": "PyMuPDF (fitz) + Tesseract OCR",
+  "ocr_utilizado": true,
+  "extraido_em": "2026-05-24T19:00:51Z",
+  "chunking": "src/rag/chunker.py"
+}

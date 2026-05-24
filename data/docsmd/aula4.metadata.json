@@ -1,0 +1,16 @@
+{
+  "doc_id": "aula4",
+  "title": "Aula4",
+  "source_pdf": "aula4.pdf",
+  "markdown_file": "aula4.md",
+  "num_pages": 3,
+  "topicos_detectados": [
+    "Entrada padrão de dados",
+    "Saída padrão de dados",
+    "Exercícios"
+  ],
+  "parser": "PyMuPDF (fitz) + Tesseract OCR",
+  "ocr_utilizado": true,
+  "extraido_em": "2026-05-24T19:00:43Z",
+  "chunking": "src/rag/chunker.py"
+}

@@ -1,0 +1,22 @@
+{
+  "doc_id": "aula25",
+  "title": "Aula25",
+  "source_pdf": "aula25.pdf",
+  "markdown_file": "aula25.md",
+  "num_pages": 6,
+  "topicos_detectados": [
+    "Sistema",
+    "Arquivo contorno.h",
+    "Arquivo matriz.h",
+    "Arquivo contorno.c",
+    "Arquivo matriz.c",
+    "Programas",
+    "Programa prog.c",
+    "Comando de compilação",
+    "Argumentos de programa"
+  ],
+  "parser": "PyMuPDF (fitz) + Tesseract OCR",
+  "ocr_utilizado": true,
+  "extraido_em": "2026-05-24T19:00:34Z",
+  "chunking": "src/rag/chunker.py"
+}

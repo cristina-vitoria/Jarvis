@@ -1,0 +1,16 @@
+{
+  "doc_id": "aula16",
+  "title": "Aula16",
+  "source_pdf": "aula16.pdf",
+  "markdown_file": "aula16.md",
+  "num_pages": 4,
+  "topicos_detectados": [
+    "Funções",
+    "Parâmetros passados por valor e por referência",
+    "Exercício"
+  ],
+  "parser": "PyMuPDF (fitz) + Tesseract OCR",
+  "ocr_utilizado": true,
+  "extraido_em": "2026-05-24T18:59:34Z",
+  "chunking": "src/rag/chunker.py"
+}

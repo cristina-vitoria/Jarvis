@@ -1,0 +1,25 @@
+{
+  "doc_id": "aula1",
+  "title": "Aula1",
+  "source_pdf": "aula1.pdf",
+  "markdown_file": "aula1.md",
+  "num_pages": 4,
+  "topicos_detectados": [
+    "Organização do computador",
+    "Alguns termos técnicos",
+    "Byte: Um conjunto de 8 bits.",
+    "Hardware: Consiste da parte física do computador.",
+    "Objetivos do curso",
+    "Jogo das gavetas",
+    "Considere as gavetas a e b.",
+    "Atribua 20 para a e 30 para b.",
+    "Some a com b e coloque o resultado em a.",
+    "Sejam a e b variáveis inteiras.",
+    "Façaa + 20e b+ 30.",
+    "Façaa tt a+b."
+  ],
+  "parser": "PyMuPDF (fitz) + Tesseract OCR",
+  "ocr_utilizado": true,
+  "extraido_em": "2026-05-24T18:59:14Z",
+  "chunking": "src/rag/chunker.py"
+}

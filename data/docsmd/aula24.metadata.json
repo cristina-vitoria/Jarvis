@@ -1,0 +1,14 @@
+{
+  "doc_id": "aula24",
+  "title": "Aula24",
+  "source_pdf": "aula24.pdf",
+  "markdown_file": "aula24.md",
+  "num_pages": 4,
+  "topicos_detectados": [
+    "Arquivo binário"
+  ],
+  "parser": "PyMuPDF (fitz) + Tesseract OCR",
+  "ocr_utilizado": true,
+  "extraido_em": "2026-05-24T19:00:26Z",
+  "chunking": "src/rag/chunker.py"
+}

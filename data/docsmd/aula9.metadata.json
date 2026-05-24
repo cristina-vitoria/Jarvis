@@ -1,0 +1,20 @@
+{
+  "doc_id": "aula9",
+  "title": "Aula9",
+  "source_pdf": "aula9.pdf",
+  "markdown_file": "aula9.md",
+  "num_pages": 5,
+  "topicos_detectados": [
+    "MC102 - Algoritmos e Progra¸c˜ao de Computador",
+    "1",
+    "Vetores",
+    "2",
+    "Busca em Vetores",
+    "Busca Linear",
+    "Busca Bin´aria"
+  ],
+  "parser": "PyMuPDF (fitz)",
+  "ocr_utilizado": false,
+  "extraido_em": "2026-05-24T19:01:02Z",
+  "chunking": "src/rag/chunker.py"
+}
