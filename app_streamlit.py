@@ -86,13 +86,48 @@ def _cancelar_quiz():
 
 
 # ---------------------------------------------------------------------------
+# Metadados padrão por disciplina detectada no nome do arquivo
+# ---------------------------------------------------------------------------
+
+_DISCIPLINAS_META: dict[str, dict] = {
+    "mc102": {
+        "disciplina": "MC102 — Algoritmos e Programação de Computadores",
+        "fonte": "IC/Unicamp — Prof. Alexandre Xavier Falcão",
+        "fonte_url": "https://www.ic.unicamp.br/~afalcao/mc102/",
+        "licenca": "Uso acadêmico",
+    },
+    "mc202": {
+        "disciplina": "MC202 — Estruturas de Dados",
+        "fonte": "IC/Unicamp",
+        "fonte_url": "",
+        "licenca": "Uso acadêmico",
+    },
+}
+
+
+def _inferir_meta(filename: str) -> dict:
+    """Retorna metadados de disciplina com base em palavras-chave no nome do arquivo."""
+    lower = filename.lower()
+    for chave, meta in _DISCIPLINAS_META.items():
+        if chave in lower:
+            return meta
+    return {}
+
+
+# ---------------------------------------------------------------------------
 # Processar PDF → salva em data/docs/ e converte para data/docsmd/
 # ---------------------------------------------------------------------------
 
-def processar_upload_pdf(uploaded_file) -> str:
+def processar_upload_pdf(
+    uploaded_file,
+    disciplina: str = "",
+    fonte: str = "",
+    fonte_url: str = "",
+    licenca: str = "",
+) -> str:
     """
     Recebe um UploadedFile do Streamlit, persiste o PDF original em
-    data/docs/ e converte para Markdown em data/docsmd/.
+    data/docs/ e converte para Markdown estruturado em data/docsmd/.
     Retorna o caminho do .md gerado.
     """
     docs_path = Path("data/docs")
@@ -102,14 +137,26 @@ def processar_upload_pdf(uploaded_file) -> str:
     pdf_dest = docs_path / uploaded_file.name
     pdf_dest.write_bytes(uploaded_file.read())
 
+    # Infere metadados pelo nome do arquivo se não fornecidos explicitamente
+    if not disciplina:
+        meta = _inferir_meta(uploaded_file.name)
+        disciplina = meta.get("disciplina", "")
+        fonte = meta.get("fonte", fonte)
+        fonte_url = meta.get("fonte_url", fonte_url)
+        licenca = meta.get("licenca", licenca)
+
     try:
         md_path, meta_path = converter_pdf(
             pdf_path=pdf_dest,
             out_dir=DOCSMD_PATH,
+            disciplina=disciplina,
+            fonte=fonte,
+            fonte_url=fonte_url,
+            licenca=licenca,
+            doc_id=pdf_dest.stem,
         )
         return str(md_path)
     except ValueError as e:
-        # Remove o PDF salvo se a conversão falhar
         pdf_dest.unlink(missing_ok=True)
         raise RuntimeError(f"Não foi possível extrair texto do PDF: {e}") from e
 
@@ -129,20 +176,46 @@ with st.sidebar:
     st.markdown("### 📤 Enviar documentos (PDF)")
     st.caption(
         "Os PDFs serão salvos em `data/docs/` e automaticamente "
-        "convertidos para Markdown em `data/docsmd/` antes de indexar."
+        "convertidos para Markdown estruturado em `data/docsmd/`."
     )
+
+    with st.expander("⚙️ Metadados do documento (opcional)", expanded=False):
+        meta_disciplina = st.text_input(
+            "Disciplina",
+            placeholder="Ex: MC102 — Algoritmos e Programação de Computadores",
+            key="meta_disciplina",
+        )
+        meta_fonte = st.text_input(
+            "Fonte",
+            placeholder="Ex: IC/Unicamp — Prof. Alexandre Xavier Falcão",
+            key="meta_fonte",
+        )
+        meta_url = st.text_input(
+            "URL da fonte",
+            placeholder="https://www.ic.unicamp.br/~afalcao/mc102/",
+            key="meta_url",
+        )
+        meta_licenca = st.text_input(
+            "Licença",
+            placeholder="Ex: CC BY-NC-SA 4.0",
+            key="meta_licenca",
+        )
 
     uploaded = st.file_uploader("Carregar PDF", type=["pdf"])
     if uploaded:
         with st.spinner("Convertendo PDF..."):
             try:
-                md_path = processar_upload_pdf(uploaded)
+                md_path = processar_upload_pdf(
+                    uploaded,
+                    disciplina=meta_disciplina,
+                    fonte=meta_fonte,
+                    fonte_url=meta_url,
+                    licenca=meta_licenca,
+                )
                 st.success(f"Documento carregado: `{Path(md_path).name}`")
-                # Re-indexar RAG com o novo documento
-                st.session_state["rag_indexado"] = False  # força re-build do índice
+                st.session_state["rag_indexado"] = False
             except RuntimeError as e:
                 st.error(str(e))
-
 
     st.divider()
 
@@ -203,21 +276,30 @@ with st.sidebar:
     st.divider()
     st.markdown("### 📁 Documentos")
 
-    # FIX: listar arquivos .md (e não .pdf) em data/docsmd/
     mds_sidebar = sorted(docsmd_path.glob("*.md"))
     if mds_sidebar:
         for d in mds_sidebar:
+            # mostra metadados se disponíveis
+            meta_file = docsmd_path / (d.stem + ".metadata.json")
+            tooltip = d.stem
+            if meta_file.exists():
+                try:
+                    m = json.loads(meta_file.read_text(encoding="utf-8"))
+                    disciplina_meta = m.get("disciplina", "")
+                    pages = m.get("num_pages", "")
+                    tooltip = f"{disciplina_meta} | {pages}p" if disciplina_meta else d.stem
+                except Exception:
+                    pass
+
             col_d, col_x = st.columns([8, 1])
             with col_d:
-                st.markdown(f"🟢 {d.stem}")
+                st.markdown(f"🟢 **{d.stem}** `{tooltip}`")
             with col_x:
                 if st.button("✕", key=f"del_{d.name}", help=f"Remover {d.stem}"):
-                    # Remove .md e .metadata.json de data/docsmd/
                     for ext in (".md", ".metadata.json"):
                         f = docsmd_path / (d.stem + ext)
                         if f.exists():
                             f.unlink()
-                    # Remove o PDF original de data/docs/
                     pdf_original = docs_path / (d.stem + ".pdf")
                     if pdf_original.exists():
                         pdf_original.unlink()
