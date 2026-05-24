@@ -4,6 +4,8 @@ import streamlit as st
 import json
 from pathlib import Path
 from datetime import date
+from src.rag.pdf_converter import converter_pdf
+from src.config import DOCSMD_PATH
 
 # --- Configuração da página ---
 st.set_page_config(
@@ -32,6 +34,8 @@ st.markdown("""
     .opcao-btn   { width: 100%; text-align: left; margin: 4px 0; }
     .feedback-correct   { background: #d4dfcc; border-radius: 8px; padding: 10px 14px; color: #1e3f0a; }
     .feedback-incorrect { background: #ddc9d0; border-radius: 8px; padding: 10px 14px; color: #561740; }
+    .upload-box  { background: #f0f7f7; border: 1px dashed #01696f; border-radius: 10px;
+                   padding: 12px; margin-bottom: 8px; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -43,7 +47,6 @@ def _init_state():
         "agente": None,
         "vectorstore": None,
         "historico_chat": [],
-        # Quiz UI state
         "quiz_feedback": None,
         "quiz_respondeu": False,
         "quiz_relatorio_pendente": None,
@@ -57,7 +60,6 @@ _init_state()
 
 # --- Helper: referência única ao agente ---
 def _agente():
-    """Retorna o agente do session_state (única fonte de verdade)."""
     return st.session_state.get("agente")
 
 
@@ -72,7 +74,6 @@ def _carregar_agente():
 
 
 def _cancelar_quiz():
-    """Cancela o quiz ativo e limpa todos os estados relacionados."""
     ag = _agente()
     if ag and ag.quiz_session:
         topico = ag.quiz_session.topico
@@ -84,15 +85,82 @@ def _cancelar_quiz():
     return None
 
 
+# ---------------------------------------------------------------------------
+# Processar PDF → salva em data/docs/ e converte para data/docsmd/
+# ---------------------------------------------------------------------------
+
+def processar_upload_pdf(uploaded_file) -> str:
+    """
+    Recebe um UploadedFile do Streamlit, persiste o PDF original em
+    data/docs/ e converte para Markdown em data/docsmd/.
+    Retorna o caminho do .md gerado.
+    """
+    docs_path = Path("data/docs")
+    docs_path.mkdir(parents=True, exist_ok=True)
+
+    # Salva o PDF original em data/docs/
+    pdf_dest = docs_path / uploaded_file.name
+    pdf_dest.write_bytes(uploaded_file.read())
+
+    try:
+        md_path, meta_path = converter_pdf(
+            pdf_path=pdf_dest,
+            out_dir=DOCSMD_PATH,
+        )
+        return str(md_path)
+    except ValueError as e:
+        # Remove o PDF salvo se a conversão falhar
+        pdf_dest.unlink(missing_ok=True)
+        raise RuntimeError(f"Não foi possível extrair texto do PDF: {e}") from e
+
+
 # ==================== SIDEBAR ====================
 with st.sidebar:
     st.markdown('<p class="main-header">🎓 JARVIS</p>', unsafe_allow_html=True)
     st.markdown('<p class="sub-header">Assistente Acadêmico Inteligente</p>', unsafe_allow_html=True)
     st.divider()
 
+    # ── UPLOAD DE PDFs ────────────────────────────────────────────────
+    docs_path = Path("data/docs")
+    docs_path.mkdir(parents=True, exist_ok=True)
+    docsmd_path = Path("data/docsmd")
+    docsmd_path.mkdir(parents=True, exist_ok=True)
+
+    st.markdown("### 📤 Enviar documentos (PDF)")
+    st.caption(
+        "Os PDFs serão salvos em `data/docs/` e automaticamente "
+        "convertidos para Markdown em `data/docsmd/` antes de indexar."
+    )
+
+    uploaded = st.file_uploader("Carregar PDF", type=["pdf"])
+    if uploaded:
+        with st.spinner("Convertendo PDF..."):
+            try:
+                md_path = processar_upload_pdf(uploaded)
+                st.success(f"Documento carregado: `{Path(md_path).name}`")
+                # Re-indexar RAG com o novo documento
+                st.session_state["rag_indexado"] = False  # força re-build do índice
+            except RuntimeError as e:
+                st.error(str(e))
+
+
+    st.divider()
+
+    # ── BOTÃO INICIAR ────────────────────────────────────────────────
     if not st.session_state["rag_carregado"]:
-        if st.button("▶ Iniciar JARVIS", use_container_width=True, type="primary"):
-            with st.spinner("Carregando modelo e documentos..."):
+        mds_disponiveis = list(docsmd_path.glob("*.md"))
+        if not mds_disponiveis:
+            st.warning(
+                "📂 Nenhum documento convertido ainda. "
+                "Envie ao menos um PDF acima antes de iniciar."
+            )
+        if st.button(
+            "▶ Iniciar JARVIS",
+            use_container_width=True,
+            type="primary",
+            disabled=len(mds_disponiveis) == 0,
+        ):
+            with st.spinner("Carregando modelo e indexando documentos..."):
                 agente_obj, vs = _carregar_agente()
                 st.session_state["agente"] = agente_obj
                 st.session_state["vectorstore"] = vs
@@ -107,7 +175,6 @@ with st.sidebar:
             total_sb = len(sess_sb.perguntas)
             idx_sb = sess_sb.indice_atual
             st.progress(idx_sb / total_sb, text=f"{idx_sb}/{total_sb} respondidas")
-            # ── FIX: usa _cancelar_quiz() — mesma função usada no body ──
             if st.button("🚫 Cancelar quiz", use_container_width=True):
                 topico_cancelado = _cancelar_quiz()
                 if topico_cancelado:
@@ -134,14 +201,35 @@ with st.sidebar:
         st.markdown(f"{icone} `{nome}`")
 
     st.divider()
-    st.markdown("### 📁 Documentos carregados")
-    docs_path = Path("data/docs")
-    docs = list(docs_path.glob("*.pdf")) + list(docs_path.glob("*.txt"))
-    if docs:
-        for d in docs:
-            st.markdown(f"- {d.name}")
+    st.markdown("### 📁 Documentos")
+
+    # FIX: listar arquivos .md (e não .pdf) em data/docsmd/
+    mds_sidebar = sorted(docsmd_path.glob("*.md"))
+    if mds_sidebar:
+        for d in mds_sidebar:
+            col_d, col_x = st.columns([8, 1])
+            with col_d:
+                st.markdown(f"🟢 {d.stem}")
+            with col_x:
+                if st.button("✕", key=f"del_{d.name}", help=f"Remover {d.stem}"):
+                    # Remove .md e .metadata.json de data/docsmd/
+                    for ext in (".md", ".metadata.json"):
+                        f = docsmd_path / (d.stem + ext)
+                        if f.exists():
+                            f.unlink()
+                    # Remove o PDF original de data/docs/
+                    pdf_original = docs_path / (d.stem + ".pdf")
+                    if pdf_original.exists():
+                        pdf_original.unlink()
+                    if st.session_state["rag_carregado"]:
+                        st.cache_resource.clear()
+                        st.session_state["rag_carregado"] = False
+                        st.session_state["agente"] = None
+                        st.session_state["vectorstore"] = None
+                    st.rerun()
+        st.caption("🟢 convertido para Markdown")
     else:
-        st.warning("Nenhum documento em data/docs/")
+        st.warning("Nenhum .md em data/docsmd/")
 
     st.divider()
     if st.button("🗑 Limpar conversa", use_container_width=True):
@@ -160,14 +248,11 @@ tab_chat, tab_agenda, tab_tarefas, tab_logs = st.tabs(
 with tab_chat:
     st.markdown("### 💬 Converse com o JARVIS")
 
-    # ── FIX: sempre lê o agente via session_state (única fonte de verdade) ──
     agente = _agente()
-    quiz_ativo = agente is not None and agente.quiz_session is not None
 
-    # --- Histórico de mensagens ---
     with st.container():
         if not st.session_state["historico_chat"]:
-            st.info("👋 Olá! Inicie o JARVIS no menu lateral e faça sua primeira pergunta.")
+            st.info("👋 Olá! Envie seus PDFs no menu lateral, inicie o JARVIS e faça sua primeira pergunta.")
         for msg in st.session_state["historico_chat"]:
             if msg["role"] == "user":
                 st.markdown(f'<div class="msg-user">👤 {msg["content"]}</div>', unsafe_allow_html=True)
@@ -176,13 +261,9 @@ with tab_chat:
 
     st.divider()
 
-    # ======================================================
-    # MODO QUIZ — UI dedicada com botões de múltipla escolha
-    # ======================================================
-    # A MELHOR PRÁTICA: Depender do objeto existir, em vez de uma flag solta.
     quiz_ativo = st.session_state.get("quiz_ativo", False)
 
-    if quiz_ativo and agente.quiz_session is not None:
+    if quiz_ativo and agente is not None and agente.quiz_session is not None:
         sess = agente.quiz_session
         q = sess.pergunta_atual
         total = len(sess.perguntas)
@@ -197,15 +278,11 @@ with tab_chat:
         with st.container():
             st.markdown(f'<div class="quiz-card"><b>{q["enunciado"]}</b></div>', unsafe_allow_html=True)
 
-        # --- Feedback da resposta anterior ---
         if st.session_state.get("quiz_feedback"):
             fb = st.session_state["quiz_feedback"]
             css_class = "feedback-correct" if fb["correto"] else "feedback-incorrect"
             icon = "✅" if fb["correto"] else "❌"
-            st.markdown(
-                f'<div class="{css_class}">{icon} {fb["texto"]}</div>',
-                unsafe_allow_html=True,
-            )
+            st.markdown(f'<div class="{css_class}">{icon} {fb["texto"]}</div>', unsafe_allow_html=True)
 
             quiz_terminou = sess.concluido
             label_btn = "🏁 Ver resultado" if quiz_terminou else "➡️ Próxima pergunta"
@@ -213,23 +290,19 @@ with tab_chat:
             if st.button(label_btn, type="primary", use_container_width=True):
                 st.session_state["quiz_feedback"] = None
                 st.session_state["quiz_respondeu"] = False
-                
-                # LÓGICA DE ENCERRAMENTO (Gatilho)
                 if quiz_terminou:
                     relatorio = sess.relatorio_final()
                     agente.quiz_session = None
-                    st.session_state["quiz_ativo"] = False # CORREÇÃO 1: Desliga a flag
+                    st.session_state["quiz_ativo"] = False
                     st.session_state["historico_chat"].append(
                         {"role": "assistant", "content": relatorio}
                     )
                 st.rerun()
 
-        # --- Aguardando Resposta ---
         elif not st.session_state.get("quiz_respondeu", False):
-            
             if st.button("🚫 Cancelar quiz", key="cancel_quiz_body"):
                 topico_cancelado = _cancelar_quiz()
-                st.session_state["quiz_ativo"] = False # Garante o cancelamento da flag
+                st.session_state["quiz_ativo"] = False
                 if topico_cancelado:
                     st.session_state["historico_chat"].append({
                         "role": "assistant",
@@ -237,7 +310,6 @@ with tab_chat:
                     })
                 st.rerun()
 
-            # Botões Múltipla Escolha
             if q.get("opcoes"):
                 cols = st.columns(2)
                 letras = ["A", "B", "C", "D"]
@@ -256,21 +328,15 @@ with tab_chat:
                             st.session_state["quiz_feedback"] = {"correto": correto, "texto": texto_fb}
                             st.session_state["quiz_respondeu"] = True
                             st.rerun()
-            
-            # Formulário Questão Aberta
             else:
                 with st.form("quiz_open_form", clear_on_submit=True):
                     resposta_aberta = st.text_area("Sua resposta:", key="quiz_open_input")
                     if st.form_submit_button("Enviar resposta", type="primary"):
                         if resposta_aberta.strip():
-                            # CORREÇÃO 2: Processa a resposta e passa pela mesma lógica de finalização
                             resultado_str = agente._processar_resposta_quiz(resposta_aberta)
-                            
                             st.session_state["historico_chat"].append(
                                 {"role": "assistant", "content": resultado_str}
                             )
-                            
-                            # Verifica se processar_resposta concluiu o quiz internamente
                             if sess.concluido:
                                 relatorio = sess.relatorio_final()
                                 agente.quiz_session = None
@@ -278,14 +344,9 @@ with tab_chat:
                                 st.session_state["historico_chat"].append(
                                     {"role": "assistant", "content": relatorio}
                                 )
-                            
                             st.session_state["quiz_feedback"] = None
                             st.session_state["quiz_respondeu"] = False
                             st.rerun()
-
-    # ======================================================
-    # MODO NORMAL — input de texto
-    # ======================================================
     else:
         with st.form("chat_form", clear_on_submit=True):
             col_input, col_btn = st.columns([5, 1])
@@ -338,7 +399,7 @@ with tab_agenda:
     else:
         agenda = []
 
-    col_filtro, col_add = st.columns([2, 1])
+    col_filtro, _ = st.columns([2, 1])
     with col_filtro:
         periodo = st.selectbox("Filtrar por período:", ["Todos", "Hoje", "Esta semana"])
 
@@ -474,10 +535,8 @@ with tab_logs:
         col_m3.metric("Ferramenta mais usada", contagem.most_common(1)[0][0] if contagem else "—")
 
         st.divider()
-
         todas_tools = ["Todas"] + sorted(contagem.keys())
         filtro_tool = st.selectbox("Filtrar por ferramenta:", todas_tools)
-
         exibir = registros_rev if filtro_tool == "Todas" else [r for r in registros_rev if r["tool"] == filtro_tool]
 
         for reg in exibir[:50]:
