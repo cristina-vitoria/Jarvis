@@ -153,7 +153,6 @@ def processar_upload_pdf(
             fonte=fonte,
             fonte_url=fonte_url,
             licenca=licenca,
-            doc_id=pdf_dest.stem,
         )
         return str(md_path)
     except ValueError as e:
@@ -435,7 +434,7 @@ with tab_chat:
             with col_input:
                 user_input = st.text_input(
                     "Mensagem",
-                    placeholder="Ex: O que tenho hoje? | Explique embeddings | Quiz sobre redes neurais",
+                    placeholder="Digite sua pergunta ou comando para o JARVIS aqui...",
                     label_visibility="collapsed",
                 )
             with col_btn:
@@ -455,9 +454,7 @@ with tab_chat:
         sugestoes = [
             "O que tenho hoje?",
             "Quais tarefas estão pendentes?",
-            "Explique regressão logística",
-            "Gere 3 exercícios sobre embeddings",
-            "Quiz sobre redes neurais",
+            "Quais provas tenho agendadas?",
         ]
         cols = st.columns(len(sugestoes))
         for i, sug in enumerate(sugestoes):
