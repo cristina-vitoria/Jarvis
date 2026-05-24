@@ -5,7 +5,6 @@ de retornar a resposta final ao usuário.
 """
 
 from src.rag.retriever import recuperar
-from src.llm_client import revisar_resposta_rag
 
 MAX_RETRIES = 2  # Número máximo de tentativas de regeração
 
@@ -15,14 +14,6 @@ SCORE_MINIMO = 0.30   # abaixo disso, o chunk é irrelevante
 def buscar_material_rag(pergunta: str, vectorstore, llm_fn) -> str:
     """
     Recupera trechos relevantes dos materiais de estudo e gera uma resposta
-    verificada pelo Agente Revisor (self-correction).
-
-    Fluxo:
-        1. Recupera chunks relevantes via FAISS.
-        2. Gera resposta com o Gemma 12B usando o contexto.
-        3. Chama o revisor em background: é SIM ou NAO?
-        4. Se NAO, regenera a resposta (até MAX_RETRIES tentativas).
-        5. Retorna a melhor resposta obtida.
 
     Args:
         pergunta: pergunta acadêmica do usuário.
