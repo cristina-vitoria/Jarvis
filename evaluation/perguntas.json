@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "pergunta": "O que é um algoritmo segundo o material de MC102?"
+  },
+  {
+    "id": 2,
+    "pergunta": "Explique a diferença entre hardware e software."
+  },
+  {
+    "id": 3,
+    "pergunta": "Qual é a diferença entre compilador e interpretador?"
+  },
+  {
+    "id": 4,
+    "pergunta": "Para que serve o comando scanf em C?"
+  },
+  {
+    "id": 5,
+    "pergunta": "Para que serve o comando printf em C?"
+  },
+  {
+    "id": 6,
+    "pergunta": "Explique a diferença entre if simples e if-else."
+  },
+  {
+    "id": 7,
+    "pergunta": "Qual é a diferença entre os comandos while, do-while e for?"
+  },
+  {
+    "id": 8,
+    "pergunta": "O que significa o operador de resto da divisão inteira em C e como ele pode ser usado?"
+  },
+  {
+    "id": 9,
+    "pergunta": "Explique o conceito de vetor e cite duas operações ou algoritmos vistos para vetores."
+  },
+  {
+    "id": 10,
+    "pergunta": "Qual é a diferença entre busca linear e busca binária?"
+  },
+  {
+    "id": 11,
+    "pergunta": "Explique como funcionam os algoritmos de ordenação por seleção, inserção e permutação."
+  },
+  {
+    "id": 12,
+    "pergunta": "O que é uma matriz e o que significa linearização de matrizes?"
+  },
+  {
+    "id": 13,
+    "pergunta": "O que são cadeias de caracteres em C e como elas diferem de variáveis simples do tipo char?"
+  },
+  {
+    "id": 14,
+    "pergunta": "Explique a diferença entre passagem de parâmetros por valor e por referência."
+  },
+  {
+    "id": 15,
+    "pergunta": "O que é recursão e em que tipo de problema ela pode ser útil?"
+  }
+]
