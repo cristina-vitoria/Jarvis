@@ -109,10 +109,7 @@ pip install -r requirements.txt
 ```
 
 ### 4. Configurar variáveis de ambiente
-Crie um arquivo `.env` na raiz:
-```
-HF_TOKEN=seu_token_huggingface_aqui
-```
+Crie um arquivo `.env` na raiz e copie o '.env.example' colocando as informações necessárias.
 
 ### 5. Adicionar documentos acadêmicos
 Os slides das aulas de MC102 já estão na pasta `data/docs/` (aula1.pdf a aula25.pdf).  
