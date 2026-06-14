@@ -1,4 +1,4 @@
-"""Cliente de integração com o modelo Gemma 12B via API compatível com OpenAI."""
+"""Cliente de integração com o modelo Qwen 2.5 14B via API compatível com OpenAI."""
 
 import json
 import re
