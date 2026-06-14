@@ -1,6 +1,6 @@
 # 🎓 JARVIS Acadêmico
 
-Assistente pessoal inteligente para estudantes de graduação, com suporte a RAG, Tool Calling e LLM (Gemma 12B). Desenvolvido como trabalho prático da disciplina de Inteligência Artificial.
+Assistente pessoal inteligente para estudantes de graduação, com suporte a RAG, Tool Calling e LLM. Desenvolvido como trabalho prático da disciplina de Inteligência Artificial.
 
 ---
 
@@ -9,7 +9,7 @@ Assistente pessoal inteligente para estudantes de graduação, com suporte a RAG
 O JARVIS Acadêmico auxilia estudantes a organizar e melhorar seu desempenho acadêmico, integrando:
 - **RAG** — consulta a materiais de estudo (PDFs, textos, anotações)
 - **Tool Calling** — chamada de ferramentas decidida pela LLM
-- **LLM** — Gemma 12B como modelo principal
+- **LLM** — Qwen2.5 14B como modelo principal
 - **Melhorias de aprendizado** — geração de exercícios e quiz interativo com active recall
 
 ---
