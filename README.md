@@ -196,7 +196,7 @@ Foram identificadas 4 categorias de falhas. Ver [`evaluation/analise_erros.md`](
 
 - **Claude** — planejamento da arquitetura, revisão do código e sugestões de melhorias
 - **Gemini** — revisão do código e sugestões de melhorias
-- **Gemma 12B** — modelo principal do sistema em produção
+- **Qwen 2.5** — modelo principal do sistema em produção
 
 ---
 
