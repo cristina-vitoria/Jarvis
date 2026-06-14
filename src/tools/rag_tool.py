@@ -27,13 +27,22 @@ def buscar_material_rag(pergunta: str, vectorstore, llm_fn) -> str:
     if not chunks:
         return "Não encontrei trechos suficientemente relevantes nos materiais."
 
-    contexto = "\n\n---\n\n".join(
-        f"[Fonte: {_label_chunk(c)}]\n{c['texto']}" for c in chunks
-    )
+    # Monta o contexto incluindo o heading_secao quando disponível,
+    # para que a LLM saiba de qual seção do slide cada trecho veio.
+    partes_contexto = []
+    for c in chunks:
+        label = _label_chunk(c)
+        heading = c.get("heading_secao", "").strip()
+        if heading:
+            partes_contexto.append(f"[Fonte: {label} — Seção: {heading}]\n{c['texto']}")
+        else:
+            partes_contexto.append(f"[Fonte: {label}]\n{c['texto']}")
 
-    # Fontes únicas — usa title quando disponível, senão nome do arquivo
+    contexto = "\n\n---\n\n".join(partes_contexto)
+
+    # Fontes únicas — inclui heading quando disponível
     fontes_unicas = list({
-        _label_chunk(c): None for c in chunks
+        _label_fonte_completo(c): None for c in chunks
     }.keys())
 
     messages = [
@@ -60,5 +69,18 @@ def buscar_material_rag(pergunta: str, vectorstore, llm_fn) -> str:
 # ---------------------------------------------------------------------------
 
 def _label_chunk(chunk: dict) -> str:
-    """Retorna o rótulo de exibição de um chunk: title se disponível, senão fonte."""
+    """Retorna o rótulo de documento de um chunk: title se disponível, senão fonte."""
     return chunk.get("title") or chunk.get("fonte", "desconhecido")
+
+
+def _label_fonte_completo(chunk: dict) -> str:
+    """
+    Rótulo completo para exibição ao usuário:
+    '<título_doc> — <heading_secao>' ou apenas '<título_doc>'.
+    Garante que fontes com headings diferentes aparecem separadas na lista.
+    """
+    doc_label = _label_chunk(chunk)
+    heading = chunk.get("heading_secao", "").strip()
+    if heading:
+        return f"{doc_label} — {heading}"
+    return doc_label
