@@ -23,7 +23,7 @@ Usuário
 [Interface CLI / Streamlit]
   │
   ▼
-[Agent (Gemma 12B + Tool Calling)]
+[Agent (Qwen 2.5 + Tool Calling)]
   │
   ├──► buscar_material_rag   → [RAG: FAISS + SentenceTransformers]
   ├──► consultar_agenda       → [agenda.json]
@@ -140,7 +140,7 @@ python evaluation/gerar_relatorio.py
 
 ## 🔧 Ferramentas (Tool Calling)
 
-A decisão de chamada é feita pela própria LLM (Gemma 12B), que recebe a mensagem do usuário e um prompt estruturado com as ferramentas disponíveis, retornando JSON com `{"tool": "...", "args": {...}}`.
+A decisão de chamada é feita pela própria LLM, que recebe a mensagem do usuário e um prompt estruturado com as ferramentas disponíveis, retornando JSON com `{"tool": "...", "args": {...}}`.
 
 | Ferramenta | Descrição |
 |---|---|
@@ -149,7 +149,7 @@ A decisão de chamada é feita pela própria LLM (Gemma 12B), que recebe a mensa
 | `adicionar_tarefa` | Insere nova tarefa acadêmica |
 | `concluir_tarefa` | Marca tarefa como concluída pelo ID numérico |
 | `buscar_material_rag` | Recupera chunks relevantes e gera resposta com base nos documentos |
-| `gerar_exercicios` | Gera exercícios de revisão sobre um tópico com o Gemma 12B |
+| `gerar_exercicios` | Gera exercícios de revisão sobre um tópico com o Qwen 2.5 |
 | `quiz_interativo` | Inicia quiz de múltipla escolha com active recall e avaliação interativa |
 
 Todos os logs de chamadas são registrados em `logs/tool_calls.jsonl` com ferramenta, entrada e saída.
