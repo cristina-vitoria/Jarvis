@@ -9,7 +9,7 @@ Assistente pessoal inteligente para estudantes de graduação, com suporte a RAG
 O JARVIS Acadêmico auxilia estudantes a organizar e melhorar seu desempenho acadêmico, integrando:
 - **RAG** — consulta a materiais de estudo (PDFs, textos, anotações)
 - **Tool Calling** — chamada de ferramentas decidida pela LLM
-- **LLM** — Qwen2.5 14B como modelo principal
+- **LLM** — Qwen 2.5 14B como modelo principal
 - **Melhorias de aprendizado** — geração de exercícios e quiz interativo com active recall
 
 ---
@@ -30,8 +30,8 @@ Usuário
   ├──► listar_tarefas         → [tarefas.json]
   ├──► adicionar_tarefa       → [tarefas.json]
   ├──► concluir_tarefa        → [tarefas.json]
-  ├──► gerar_exercicios       → [Gemma 12B]
-  └──► quiz_interativo        → [Gemma 12B]
+  ├──► gerar_exercicios       → [Qwen 2.5]
+  └──► quiz_interativo        → [Qwen 2.5]
   │
   ▼
 [Logger → logs/tool_calls.jsonl]
@@ -49,7 +49,7 @@ jarvis-academico/
 ├── app_streamlit.py          ← Interface gráfica 
 ├── src/
 │   ├── config.py
-│   ├── llm_client.py         ← Integração Gemma 12B + seletor de ferramentas
+│   ├── llm_client.py         ← Integração Qwen 2.5 + seletor de ferramentas
 │   ├── agent.py              ← Agente principal + QuizSession
 │   ├── logger.py             ← Logs de tool calls (JSONL)
 │   ├── rag/
@@ -203,9 +203,9 @@ Foram identificadas 4 categorias de falhas. Ver [`evaluation/analise_erros.md`](
 ## 🛠️ Tecnologias
 
 - Python 3.10+
-- Gemma 12B (via API compatível com OpenAI / Hugging Face)
+- Qwen 2.5 (via API compatível com OpenAI)
 - Sentence Transformers (`all-MiniLM-L6-v2`)
 - FAISS
 - pypdf
-- Streamlit (interface gráfica opcional)
+- Streamlit 
 - pytest
