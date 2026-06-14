@@ -33,11 +33,13 @@ class VectorStore:
         Retorna uma entrada por documento único indexado.
 
         Cada entrada contém:
-            'fonte'  : nome do arquivo .md
-            'doc_id' : identificador do documento (quando disponível)
-            'title'  : título legível               (quando disponível)
-            'topicos': lista de tópicos detectados  (quando disponível)
-            'num_chunks': quantidade de chunks deste documento
+            'fonte'       : nome do arquivo .md
+            'doc_id'      : identificador do documento (quando disponível)
+            'title'       : título legível               (quando disponível)
+            'topicos'     : lista de tópicos detectados  (quando disponível)
+            'num_chunks'  : quantidade de chunks deste documento
+            'headings'    : lista de headings únicos indexados (chunking semântico)
+            'estrategia'  : 'heading' | 'fixo' | 'misto' conforme os chunks do doc
         """
         vistos: dict[str, dict] = {}  # fonte -> info
         for chunk in self.chunks:
@@ -49,9 +51,33 @@ class VectorStore:
                     "title": chunk.get("title", fonte),
                     "topicos": chunk.get("topicos_detectados", []),
                     "num_chunks": 0,
+                    "headings": [],
+                    "_estrategias": set(),
                 }
             vistos[fonte]["num_chunks"] += 1
-        return list(vistos.values())
+
+            # Coleta headings únicos (preserva ordem de aparição)
+            heading = chunk.get("heading_secao", "").strip()
+            # Remove sufixo de sub-chunk "(parte N/M)" para deduplicação
+            heading_base = heading.split(" (parte ")[0].strip() if heading else ""
+            if heading_base and heading_base not in vistos[fonte]["headings"]:
+                vistos[fonte]["headings"].append(heading_base)
+
+            estrategia = chunk.get("estrategia_chunking", "")
+            if estrategia:
+                vistos[fonte]["_estrategias"].add(estrategia)
+
+        # Pós-processa campos derivados
+        resultado = []
+        for info in vistos.values():
+            estrategias = info.pop("_estrategias")
+            if len(estrategias) > 1:
+                info["estrategia"] = "misto"
+            else:
+                info["estrategia"] = next(iter(estrategias), "desconhecido")
+            resultado.append(info)
+
+        return resultado
 
 
 def construir_vectorstore(chunks: list[dict]) -> VectorStore:

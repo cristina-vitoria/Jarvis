@@ -71,11 +71,24 @@ def main():
 
         print(f"\n[{pid}/{len(perguntas)}] {tipo.upper()} — Processando...")
 
-        # Recupera documentos se for RAG ou aprendizado
+        # Recupera documentos se for RAG ou aprendizado.
+        # Registra id, fonte, heading_secao e estrategia_chunking para
+        # rastreabilidade total na análise de erros do relatório.
         docs_recuperados = []
         if tipo in ("rag", "aprendizado") and vectorstore is not None:
             chunks = recuperar(pergunta, vectorstore)
-            docs_recuperados = [c["id"] for c in chunks]
+            for c in chunks:
+                entrada_doc = {
+                    "id": c["id"],
+                    "fonte": c.get("fonte", ""),
+                    "score": round(c.get("score", 0.0), 4),
+                    "estrategia_chunking": c.get("estrategia_chunking", "desconhecido"),
+                }
+                # Inclui heading_secao apenas quando presente (chunking semântico)
+                heading = c.get("heading_secao", "").strip()
+                if heading:
+                    entrada_doc["heading_secao"] = heading
+                docs_recuperados.append(entrada_doc)
 
         # Gera resposta
         try:
