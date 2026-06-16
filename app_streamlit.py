@@ -64,7 +64,7 @@ def _agente():
 
 
 # --- Carregamento do agente (lazy) ---
-@st.cache_resource(show_spinner="Carregando modelo Gemma 12B...")
+@st.cache_resource(show_spinner="Carregando modelo...")
 def _carregar_agente():
     from main import inicializar_rag
     from src.agent import JarvisAgent

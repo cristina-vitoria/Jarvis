@@ -25,7 +25,23 @@ Usuário
   ▼
 [Agent (Qwen 2.5 + Tool Calling)]
   │
-  ├──► buscar_material_rag   → [RAG: FAISS + SentenceTransformers]
+  ├──► buscar_material_rag
+  │       │
+  │       ▼
+  │    [Query Expansion / HyDE]  ← LLM transforma a query
+  │       │
+  │       ▼
+  │    [Busca Híbrida: FAISS (denso) + BM25 (léxico)]
+  │       │
+  │       ▼
+  │    [RRF — Reciprocal Rank Fusion]
+  │       │
+  │       ▼
+  │    [Re-ranking — Cross-Encoder BAAI/bge-reranker-base]
+  │       │
+  │       ▼
+  │    [Top-K chunks → geração de resposta]
+  │
   ├──► consultar_agenda       → [agenda.json]
   ├──► listar_tarefas         → [tarefas.json]
   ├──► adicionar_tarefa       → [tarefas.json]
@@ -36,6 +52,43 @@ Usuário
   ▼
 [Logger → logs/tool_calls.jsonl]
 ```
+
+---
+## 🔍 Pipeline RAG
+
+O sistema de recuperação usa três técnicas combinadas para maximizar a qualidade dos chunks recuperados:
+
+### 1. Query Expansion / HyDE
+Antes de buscar no índice, a query do usuário é transformada via LLM.
+Configurável por `RAG_QUERY_EXPANSION_MODE` no `.env`:
+
+| Modo | Descrição |
+|---|---|
+| `expansion` (padrão) | Gera sinônimos e termos técnicos adicionais e concatena à query original |
+| `hyde` | Gera um parágrafo hipotético que responderia a pergunta (*Hypothetical Document Embeddings*) |
+
+### 2. Busca Híbrida (FAISS + BM25)
+Combina recuperação semântica (densa, via FAISS) com recuperação léxica (esparsa, via BM25Okapi).
+Os resultados são fundidos via **Reciprocal Rank Fusion (RRF, k=60)**.
+
+### 3. Re-ranking (Cross-Encoder)
+Os `RAG_RERANKER_CANDIDATES` (padrão: 15) melhores candidatos são reordenados
+pelo modelo `BAAI/bge-reranker-base`, que avalia cada par (query, chunk) diretamente.
+Os `RAG_TOP_K` (padrão: 3) mais relevantes são enviados à LLM.
+
+### Variáveis de configuração (`.env`)
+
+| Variável | Padrão | Descrição |
+|---|---|---|
+| `EMBED_MODEL` | `intfloat/multilingual-e5-base` | Modelo de embeddings |
+| `RAG_TOP_K` | `3` | Chunks finais enviados à LLM |
+| `RAG_QUERY_EXPANSION` | `true` | Ativa Query Expansion / HyDE |
+| `RAG_QUERY_EXPANSION_MODE` | `expansion` | Modo: `expansion` ou `hyde` |
+| `RAG_HYBRID_ENABLED` | `true` | Ativa busca híbrida FAISS+BM25 |
+| `RAG_HYBRID_N_DENSE` | `10` | Candidatos FAISS antes da fusão RRF |
+| `RAG_HYBRID_N_SPARSE` | `10` | Candidatos BM25 antes da fusão RRF |
+| `RAG_RERANKER` | `true` | Ativa re-ranking com Cross-Encoder |
+| `RAG_RERANKER_CANDIDATES` | `15` | Candidatos enviados ao re-ranker |
 
 ---
 
@@ -54,12 +107,16 @@ jarvis-academico/
 │   ├── agent.py              ← Agente principal + QuizSession
 │   ├── logger.py             ← Logs de tool calls (JSONL)
 │   ├── rag/
-│   │   ├── loader.py         ← Carregamento de PDFs e TXTs
-│   │   ├── pdf_converter.py  ← Conversão de PDF para Markdown estruturado
-│   │   ├── chunker.py        ← Divisão semântica em chunks por headings
-│   │   ├── embeddings.py     ← Geração de embeddings
-│   │   ├── vectorstore.py    ← Índice FAISS
-│   │   └── retriever.py      ← Recuperação de trechos relevantes
+│   │   ├── loader.py           ← Carregamento de PDFs e TXTs
+│   │   ├── pdf_converter.py    ← Conversão de PDF para Markdown estruturado
+│   │   ├── chunker.py          ← Divisão semântica em chunks por headings
+│   │   ├── embeddings.py       ← Geração de embeddings (multilingual-e5-base)
+│   │   ├── vectorstore.py      ← Índice FAISS
+│   │   ├── bm25_store.py       ← Índice BM25Okapi para busca léxica
+│   │   ├── hybrid_retriever.py ← Fusão FAISS+BM25 via RRF
+│   │   ├── query_expansion.py  ← Query Expansion e HyDE
+│   │   ├── reranker.py         ← Cross-Encoder BAAI/bge-reranker-base
+│   │   └── retriever.py        ← Orquestrador da pipeline RAG
 │   ├── tools/
 │   │   ├── agenda.py
 │   │   ├── tarefas.py
@@ -234,7 +291,7 @@ Todos os logs de chamadas são registrados em `logs/tool_calls.jsonl` com ferram
 - **Localização:** `data/docs/` (aula1.pdf a aula25.pdf)
 - **Quantidade:** 25 documentos
 - **Formatos suportados:** PDF, TXT
-- **Chunking:** semântico por headings (tamanho máximo 1000 chars, overlap 150) — configurável via `.env`
+- **Chunking:** semântico por headings 
 - **Impacto no RAG:** o chunking por headings preserva a coerência semântica de cada slide; o limite de 1000 chars evita cortar seções densas ao meio
 - **Limitações:** fórmulas matemáticas e tabelas em PDF podem ter extração imprecisa; tópicos avançados (complexidade, I/O detalhado) têm cobertura irregular entre as aulas
 
@@ -283,3 +340,6 @@ Foram identificadas 4 categorias de falhas. Ver [`evaluation/analise_erros.md`](
 | Streamlit | 1.35.0 | Interface gráfica |
 | pytest | 8.2.0 | Testes automatizados |
 | Tesseract OCR | 5.x *(opcional)* | OCR para PDFs escaneados |
+| rank-bm25                     | 0.2.2         | BM25Okapi para busca léxica   |
+| BAAI/bge-reranker-base        | —             | Cross-Encoder para re-ranking |
+| intfloat/multilingual-e5-base | —             | Embedding multilíngue PT-BR   |

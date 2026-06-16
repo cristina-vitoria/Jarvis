@@ -49,7 +49,7 @@ EMBED_MODEL: str = os.getenv(
 #                          Melhor recall para perguntas cujo vocabulário
 #                          difere do material indexado.
 RAG_QUERY_EXPANSION: bool = os.getenv("RAG_QUERY_EXPANSION", "true").lower() == "true"
-RAG_QUERY_EXPANSION_MODE: str = os.getenv("RAG_QUERY_EXPANSION_MODE", "expansion")
+RAG_QUERY_EXPANSION_MODE: str = os.getenv("RAG_QUERY_EXPANSION_MODE", "hyde")
 
 # Busca Híbrida: número de candidatos buscados antes da fusão RRF.
 # N_DENSE: candidatos do FAISS (semântico)

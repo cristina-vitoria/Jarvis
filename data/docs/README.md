@@ -63,23 +63,5 @@ O dataset é composto por **25 arquivos PDF** (aula1.pdf a aula25.pdf), correspo
 2. **Tabelas e diagramas** — figuras, tabelas e fluxogramas embutidos nos slides não são extraídos como texto, gerando lacunas de conteúdo.
 3. **Cobertura irregular** — tópicos avançados como complexidade de algoritmos, formatos de I/O detalhados e operadores lógicos podem ter cobertura limitada dependendo do slide específico carregado.
 4. **Sem gabarito** — os slides não incluem exercícios resolvidos ou exemplos completos de código em todos os tópicos.
-5. **Versão dos slides** — os slides correspondem a uma oferta específica da disciplina; versões de semestres diferentes podem ter organização distinta.
 
 ---
-
-## Estratégia de Chunking
-
-- **Tamanho do chunk:** 700 caracteres
-- **Overlap:** 120 caracteres
-- **Estratégia:** chunking fixo por tamanho de caracteres (configurável em `src/config.py`)
-
-### Impacto no RAG
-
-| Parâmetro | Impacto positivo | Impacto negativo |
-|---|---|---|
-| Chunk menor (~300–500 chars) | Maior precisão em perguntas pontuais | Perde contexto em respostas elaboradas |
-| Chunk maior (~1000–1500 chars) | Preserva mais contexto por trecho | Reduz precisão; recupera conteúdo irrelevante |
-| Overlap maior (~200 chars) | Reduz perda de informação entre chunks | Aumenta redundância no índice |
-| **700 chars / 120 overlap (escolhido)** | Equilíbrio entre precisão e contexto | Pode fragmentar explicações longas |
-
-A escolha de 700 caracteres foi feita para equilibrar precisão na recuperação com preservação de contexto suficiente para respostas coerentes sobre conceitos de programação.

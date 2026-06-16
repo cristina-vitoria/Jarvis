@@ -70,7 +70,7 @@ def expandir_query(pergunta: str, llm_fn) -> str:
 # ---------------------------------------------------------------------------
 
 _PROMPT_HYDE = (
-    "Você é um assistente acadêmico especializado em Ciência da Computação.\n"
+    "Você é um assistente acadêmico.\n"
     "Escreva um trecho de material didático (slides, apostila ou livro) que responderia "
     "diretamente à pergunta abaixo. O trecho deve:\n"
     "- Ter entre 3 e 6 frases, no estilo de um texto acadêmico.\n"
