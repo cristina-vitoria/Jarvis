@@ -1,34 +1,39 @@
-# ── LLM / API ───────────────────────────────────────────────────────────────
-openai>=1.30.0
+# =============================================================================
+# JARVIS Acadêmico — dependências Python
+# Testado com Python 3.11. NÃO usar Python 3.13+ (PyTorch sem suporte).
+# =============================================================================
 
-# ── RAG ─────────────────────────────────────────────────────────────────────
-sentence-transformers>=2.7.0
-faiss-cpu>=1.8.0
+# ── LLM / API ────────────────────────────────────────────────────────────────
+openai>=1.30.0,<2.0.0
 
-# ── Extração de PDF ─────────────────────────────────────────────────────────
-# PyMuPDF: extração nativa de texto com estrutura (headings via fonte)
-pymupdf>=1.24.0
-# pypdf: leitura de metadados e fallback simples
-pypdf>=4.2.0
-# pymupdf4llm: converte páginas PDF em Markdown enriquecido
+# ── RAG ──────────────────────────────────────────────────────────────────────
+sentence-transformers>=2.7.0,<4.0.0
+faiss-cpu>=1.8.0,<2.0.0
+
+# ── PyTorch (CPU-only) ───────────────────────────────────────────────────────
+# IMPORTANTE: instale ANTES de rodar este requirements.txt com:
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+# A versão com CUDA falha em máquinas sem GPU NVIDIA (WinError 1114).
+# Versão mínima compatível com sentence-transformers 2.7+
+torch>=2.2.0
+
+# ── Extração de PDF ──────────────────────────────────────────────────────────
+pymupdf>=1.24.0,<2.0.0
+pypdf>=4.2.0,<6.0.0
 pymupdf4llm>=0.0.17
-# pdfplumber: extração de tabelas e layouts complexos
-pdfplumber>=0.11.0
+pdfplumber>=0.11.0,<1.0.0
 
-# ── OCR (opcional, necessário para PDFs escaneados) ──────────────────────────
-# Requer também a instalação do Tesseract no sistema operacional:
-#   Ubuntu/Debian: sudo apt install tesseract-ocr tesseract-ocr-por
-#   macOS:         brew install tesseract
-#   Windows:       https://github.com/UB-Mannheim/tesseract/wiki
-pytesseract>=0.3.10
-Pillow>=10.3.0
+# ── OCR (opcional — apenas para PDFs escaneados sem camada de texto) ─────────
+# Requer Tesseract instalado no sistema operacional (veja README).
+pytesseract>=0.3.10,<1.0.0
+Pillow>=10.3.0,<12.0.0
 
 # ── Interface ────────────────────────────────────────────────────────────────
-streamlit>=1.35.0
+streamlit>=1.35.0,<2.0.0
 
 # ── Utilitários ──────────────────────────────────────────────────────────────
-python-dotenv>=1.0.0
-numpy>=1.26.0
+python-dotenv>=1.0.0,<2.0.0
+numpy>=1.26.0,<3.0.0
 
 # ── Testes ───────────────────────────────────────────────────────────────────
-pytest>=8.2.0
+pytest>=8.2.0,<9.0.0

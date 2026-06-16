@@ -45,8 +45,9 @@ Usuário
 jarvis-academico/
 ├── README.md
 ├── requirements.txt
+├── .env.example              ← Modelo de configuração (copie para .env)
 ├── main.py
-├── app_streamlit.py          ← Interface gráfica 
+├── app_streamlit.py          ← Interface gráfica
 ├── src/
 │   ├── config.py
 │   ├── llm_client.py         ← Integração Qwen 2.5 + seletor de ferramentas
@@ -54,7 +55,8 @@ jarvis-academico/
 │   ├── logger.py             ← Logs de tool calls (JSONL)
 │   ├── rag/
 │   │   ├── loader.py         ← Carregamento de PDFs e TXTs
-│   │   ├── chunker.py        ← Divisão em chunks
+│   │   ├── pdf_converter.py  ← Conversão de PDF para Markdown estruturado
+│   │   ├── chunker.py        ← Divisão semântica em chunks por headings
 │   │   ├── embeddings.py     ← Geração de embeddings
 │   │   ├── vectorstore.py    ← Índice FAISS
 │   │   └── retriever.py      ← Recuperação de trechos relevantes
@@ -88,42 +90,110 @@ jarvis-academico/
 
 ---
 
+## ⚙️ Pré-requisitos do sistema
+
+Antes de instalar as dependências Python, certifique-se de ter:
+
+### Python 3.11
+> ⚠️ **Python 3.12+ pode funcionar, mas Python 3.13 não é suportado** pelo PyTorch e causará erro `[WinError 1114]` no Windows.
+
+- Download: https://www.python.org/downloads/release/python-3119/
+- Durante a instalação, marque ✅ **"Add python.exe to PATH"**
+
+### Git
+- Download: https://git-scm.com/downloads
+
+### Tesseract OCR *(opcional — apenas para PDFs escaneados)*
+
+Necessário somente se os PDFs não tiverem camada de texto nativa (imagens de scans).
+
+| Sistema | Comando / Link |
+|---|---|
+| **Windows** | [Instalador UB-Mannheim](https://github.com/UB-Mannheim/tesseract/wiki) — marque "Additional language data (Portuguese)" |
+| **Ubuntu/Debian** | `sudo apt install tesseract-ocr tesseract-ocr-por` |
+| **macOS** | `brew install tesseract` |
+
+Após instalar no Windows, adicione o caminho ao PATH do sistema (ex: `C:\Program Files\Tesseract-OCR`).
+
+---
+
 ## ⚙️ Como executar
 
 ### 1. Clonar o repositório
 ```bash
-git clone https://github.com/cristina-vitoria/jarvis-academico.git
-cd jarvis-academico
+git clone https://github.com/cristina-vitoria/Jarvis.git
+cd Jarvis
 ```
 
-### 2. Criar e ativar o ambiente virtual
+### 2. Criar e ativar o ambiente virtual com Python 3.11
+
+**Linux / macOS:**
 ```bash
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-venv\Scripts\activate     # Windows
+python3.11 -m venv venv
+source venv/bin/activate
 ```
 
-### 3. Instalar dependências
+**Windows (PowerShell):**
+```powershell
+py -3.11 -m venv venv
+.\venv\Scripts\Activate.ps1
+```
+
+> Se o comando `py -3.11` não funcionar, use o caminho completo:
+> `C:\Users\SeuUsuario\AppData\Local\Programs\Python\Python311\python.exe -m venv venv`
+
+### 3. Instalar PyTorch (CPU-only)
+
+> ⚠️ **Este passo deve ser feito ANTES de instalar o `requirements.txt`.**  
+> O `pip install torch` padrão baixa a versão com CUDA, que falha em máquinas sem GPU NVIDIA.
+
+```bash
+pip install torch --index-url https://download.pytorch.org/whl/cpu
+```
+
+Verifique a instalação:
+```bash
+python -c "import torch; print('PyTorch OK:', torch.__version__)"
+```
+
+### 4. Instalar demais dependências
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Configurar variáveis de ambiente
-Crie um arquivo `.env` na raiz e copie o '.env.example' colocando as informações necessárias.
+### 5. Configurar variáveis de ambiente
 
-### 5. Adicionar documentos acadêmicos
-Os slides das aulas de MC102 já estão na pasta `data/docs/` (aula1.pdf a aula25.pdf).  
-Para adicionar outros materiais, basta colocar arquivos `.pdf` ou `.txt` nessa pasta.
+Copie o arquivo de exemplo e preencha com as informações fornecidas pelo professor:
 
-### 6. Rodar o sistema (CLI)
+```bash
+cp .env.example .env   # Linux/macOS
+copy .env.example .env  # Windows
+```
+
+Edite o `.env` com as credenciais da API:
+```env
+LLM_BASE_URL=https://url-fornecida-pelo-professor/v1
+LLM_API_KEY=seu-token-aqui
+```
+
+### 6. Adicionar documentos acadêmicos
+
+Os slides de MC102 (UNICAMP) já estão em `data/docs/` (aula1.pdf a aula25.pdf).  
+Para adicionar outros materiais, coloque arquivos `.pdf` ou `.txt` nessa pasta.
+
+### 7. Rodar o sistema
+
+**Interface de linha de comando:**
 ```bash
 python main.py
 ```
 
-### 7. Rodar a interface gráfica (Streamlit)
+**Interface gráfica (Streamlit):**
 ```bash
 streamlit run app_streamlit.py
 ```
+
+Acesse em: http://localhost:8501
 
 ### 8. Executar os testes
 ```bash
@@ -164,8 +234,8 @@ Todos os logs de chamadas são registrados em `logs/tool_calls.jsonl` com ferram
 - **Localização:** `data/docs/` (aula1.pdf a aula25.pdf)
 - **Quantidade:** 25 documentos
 - **Formatos suportados:** PDF, TXT
-- **Chunking:** 700 caracteres com overlap de 120 (configurável em `src/config.py`)
-- **Impacto no RAG:** chunks menores aumentam precisão em detalhes pontuais; chunks maiores preservam contexto para respostas elaboradas
+- **Chunking:** semântico por headings (tamanho máximo 1000 chars, overlap 150) — configurável via `.env`
+- **Impacto no RAG:** o chunking por headings preserva a coerência semântica de cada slide; o limite de 1000 chars evita cortar seções densas ao meio
 - **Limitações:** fórmulas matemáticas e tabelas em PDF podem ter extração imprecisa; tópicos avançados (complexidade, I/O detalhado) têm cobertura irregular entre as aulas
 
 Ver documentação completa em [`data/docs/README.md`](data/docs/README.md).
@@ -202,10 +272,14 @@ Foram identificadas 4 categorias de falhas. Ver [`evaluation/analise_erros.md`](
 
 ## 🛠️ Tecnologias
 
-- Python 3.10+
-- Qwen 2.5 (via API compatível com OpenAI)
-- Sentence Transformers (`all-MiniLM-L6-v2`)
-- FAISS
-- pypdf
-- Streamlit 
-- pytest
+| Tecnologia | Versão mínima | Uso |
+|---|---|---|
+| Python | **3.11** | Runtime (3.13 não suportado) |
+| PyTorch | 2.2.0 (CPU) | Backend do sentence-transformers |
+| Qwen 2.5 14B | — | LLM principal (via API do professor) |
+| Sentence Transformers | 2.7.0 | Geração de embeddings |
+| FAISS-CPU | 1.8.0 | Índice vetorial |
+| PyMuPDF | 1.24.0 | Extração de PDF com estrutura |
+| Streamlit | 1.35.0 | Interface gráfica |
+| pytest | 8.2.0 | Testes automatizados |
+| Tesseract OCR | 5.x *(opcional)* | OCR para PDFs escaneados |
