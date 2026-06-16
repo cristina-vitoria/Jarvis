@@ -25,6 +25,11 @@ EMBED_MODEL: str = os.getenv(
     "EMBED_MODEL", "sentence-transformers/multi-qa-MiniLM-L6-cos-v1"
 )
 
+# Query Expansion: expande a query via LLM antes de buscar no FAISS.
+# Adiciona latência de ~1 chamada LLM extra por consulta RAG.
+# Recomendado: false só em testes rápidos.
+RAG_QUERY_EXPANSION: bool = os.getenv("RAG_QUERY_EXPANSION", "true").lower() == "true"
+
 # Busca Híbrida: número de candidatos buscados antes da fusão RRF.
 # N_DENSE: candidatos do FAISS (semântico)
 # N_SPARSE: candidatos do BM25 (léxico)
