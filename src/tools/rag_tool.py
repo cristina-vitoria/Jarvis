@@ -9,6 +9,25 @@ from src.rag.retriever import recuperar
 SCORE_MINIMO = 0.30   # abaixo disso o chunk é considerado irrelevante
 
 
+def _score_efetivo(chunk: dict) -> float:
+    """Retorna o score mais relevante disponível no chunk.
+
+    Prioridade:
+        1. reranker_score — presente quando RAG_RERANKER=true (Cross-Encoder, 0-1 via sigmoid)
+        2. rrf_score      — presente quando RAG_HYBRID_ENABLED=true (Reciprocal Rank Fusion)
+        3. score          — busca semântica pura (similaridade de cosseno FAISS)
+
+    O SCORE_MINIMO é calibrado para valores de cosseno (0-1). Para rrf_score
+    e reranker_score os valores também ficam nessa faixa, então o limiar é
+    aplicável nos três casos.
+    """
+    for campo in ("reranker_score", "rrf_score", "score"):
+        valor = chunk.get(campo)
+        if valor is not None:
+            return float(valor)
+    return 0.0
+
+
 def buscar_material_rag(pergunta: str, vectorstore, llm_fn, bm25_store=None) -> str:
     """
     Recupera trechos relevantes dos materiais de estudo e gera uma resposta.
@@ -22,7 +41,7 @@ def buscar_material_rag(pergunta: str, vectorstore, llm_fn, bm25_store=None) -> 
         Resposta gerada com base nos documentos recuperados.
     """
     chunks = recuperar(pergunta, vectorstore, llm_fn=llm_fn, bm25_store=bm25_store)
-    chunks = [c for c in chunks if c.get("score", 0) >= SCORE_MINIMO]
+    chunks = [c for c in chunks if _score_efetivo(c) >= SCORE_MINIMO]
 
     if not chunks:
         return "Não encontrei trechos suficientemente relevantes nos materiais."
