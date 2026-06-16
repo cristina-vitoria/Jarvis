@@ -1,12 +1,41 @@
-"""Configurações globais do JARVIS Acadêmico."""
+"""Configurações centrais do JARVIS Acadêmico — carregadas via .env."""
 
+import os
 from pathlib import Path
 from dotenv import load_dotenv
-import os
 
 load_dotenv()
 
+# ---------------------------------------------------------------------------
+# LLM
+# ---------------------------------------------------------------------------
+LLM_BASE_URL: str = os.getenv("LLM_BASE_URL", "http://localhost:8000/v1")
+LLM_API_KEY: str = os.getenv("LLM_API_KEY", "none")
+MODEL_ID: str = os.getenv("MODEL_ID", "Qwen/Qwen2.5-14B-Instruct-AWQ")
+MAX_NEW_TOKENS: int = int(os.getenv("MAX_NEW_TOKENS", "512"))
+LLM_TIMEOUT: int = int(os.getenv("LLM_TIMEOUT", "120"))
+
+# ---------------------------------------------------------------------------
+# RAG
+# ---------------------------------------------------------------------------
+CHUNK_SIZE: int = int(os.getenv("CHUNK_SIZE", "1000"))
+CHUNK_OVERLAP: int = int(os.getenv("CHUNK_OVERLAP", "150"))
+RAG_TOP_K: int = int(os.getenv("RAG_TOP_K", "3"))
+EMBED_MODEL: str = os.getenv(
+    "EMBED_MODEL", "sentence-transformers/multi-qa-MiniLM-L6-cos-v1"
+)
+
+# Busca Híbrida: número de candidatos buscados antes da fusão RRF.
+# N_DENSE: candidatos do FAISS (semântico)
+# N_SPARSE: candidatos do BM25 (léxico)
+# O resultado final é sempre RAG_TOP_K após a fusão.
+RAG_HYBRID_ENABLED: bool = os.getenv("RAG_HYBRID_ENABLED", "true").lower() == "true"
+RAG_HYBRID_N_DENSE: int = int(os.getenv("RAG_HYBRID_N_DENSE", "10"))
+RAG_HYBRID_N_SPARSE: int = int(os.getenv("RAG_HYBRID_N_SPARSE", "10"))
+
+# ---------------------------------------------------------------------------
 # Caminhos
+# ---------------------------------------------------------------------------
 ROOT_PATH = Path(__file__).parent.parent
 DATA_PATH = ROOT_PATH / "data"
 
@@ -26,27 +55,15 @@ TOOL_LOG_PATH = LOGS_PATH / "tool_calls.jsonl"
 for p in [DATA_PATH, DOCS_PATH, DOCSMD_PATH, LOGS_PATH]:
     p.mkdir(parents=True, exist_ok=True)
 
-# LLM — API compatível com OpenAI
-LLM_BASE_URL = os.getenv("LLM_BASE_URL", "")
-LLM_API_KEY = os.getenv("LLM_API_KEY", "")
-MODEL_ID = os.getenv("MODEL_ID", "Qwen/Qwen2.5-14B-Instruct-AWQ")
-MAX_NEW_TOKENS = int(os.getenv("MAX_NEW_TOKENS", "512"))
-# Timeout em segundos para chamadas ao LLM (aumentar se a API for lenta)
-LLM_TIMEOUT = int(os.getenv("LLM_TIMEOUT", "120"))
-
-# RAG
-CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", "700"))
-CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP", "120"))
-RAG_TOP_K = int(os.getenv("RAG_TOP_K", "3"))
-EMBED_MODEL = os.getenv("EMBED_MODEL", "sentence-transformers/multi-qa-MiniLM-L6-cos-v1")
-
 # Prompt do sistema
 SYSTEM_PROMPT = """
 Você é o JARVIS Acadêmico, um assistente inteligente focado em otimizar a rotina e o aprendizado de estudantes de Ciência da Computação.
 
 ### DIRETRIZES DE COMPORTAMENTO
-1. Personalidade: Seja prestativo, claro, objetivo e motivador.
-2. Papel: Seu papel é ajudar com estudos, agenda, tarefas e revisão de conteúdo.
+- Personalidade: Seja prestativo, claro, objetivo e motivador.
+- Papel: Seu papel é ajudar com estudos, agenda, tarefas e revisão de conteúdo.
+- Formatação de Saída: Sempre que apresentar exemplos de código, comandos de terminal, arquivos de configuração ou logs de erro, utilize blocos de código em Markdown, especificando a linguagem correta (ex: ```python, 
+```bash, ```json).
 
 ### USO DE FERRAMENTAS (TOOL CALLING)
 - Você tem acesso a ferramentas de agenda, gerenciamento de tarefas e busca de materiais acadêmicos.
