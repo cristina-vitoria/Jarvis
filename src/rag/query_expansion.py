@@ -14,12 +14,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 _PROMPT_EXPANSAO = (
-    "Você é um assistente de busca acadêmica.\n"
-    "Dado o trecho de pergunta abaixo, reescreva-a gerando sinônimos e termos "
-    "técnicos relacionados para melhorar a recuperação de documentos.\n"
-    "Retorne APENAS a pergunta expandida, sem explicações ou marcadores.\n\n"
-    "Pergunta original: {pergunta}\n"
-    "Pergunta expandida:"
+    "Você é um assistente de busca acadêmica. Sua tarefa é expandir a consulta abaixo\n"
+    "Dado o trecho de pergunta abaixo, reescreva-a gerando sinônimos e termos técnicos relacionados para melhorar a recuperação de documentos.\n"
+    "REGRAS ESTRITAS:\n"
+    "- Retorne APENAS os termos adicionais separados por espaço.\n"
+    "- NÃO inclua frases como 'Aqui estão os sinônimos', 'Termos:' ou qualquer texto de conversação.\n"
+    "- NÃO repita a consulta original."
 )
 
 

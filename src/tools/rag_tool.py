@@ -21,7 +21,7 @@ def buscar_material_rag(pergunta: str, vectorstore, llm_fn) -> str:
     Returns:
         Resposta gerada com base nos documentos recuperados.
     """
-    chunks = recuperar(pergunta, vectorstore)
+    chunks = recuperar(pergunta, vectorstore, llm_fn=llm_fn)
     chunks = [c for c in chunks if c.get("score", 0) >= SCORE_MINIMO]
 
     if not chunks:

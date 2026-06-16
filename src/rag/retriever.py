@@ -21,10 +21,11 @@ from src.config import (
     RAG_QUERY_EXPANSION,
     RAG_RERANKER,
     RAG_RERANKER_CANDIDATES,
+    RAG_HYBRID_ENABLED,          
 )
-
 from src.rag.query_expansion import expandir_query
 from src.rag.reranker import rerankar
+from src.rag.hybrid_retriever import recuperar_hibrido
 
 
 
@@ -58,14 +59,21 @@ def recuperar(
     if RAG_QUERY_EXPANSION and llm_fn is not None:
         query_busca = expandir_query(pergunta, llm_fn)
 
-    # 2. Busca + Re-ranking opcional
-    if RAG_RERANKER:
-        candidatos = vectorstore.buscar(query_busca, k=RAG_RERANKER_CANDIDATES)
-        resultados = rerankar(pergunta, candidatos, top_k=k)
+    # 2. Busca: híbrida ou semântica pura
+    if RAG_HYBRID_ENABLED:
+        candidatos_base = recuperar_hibrido(query_busca, vectorstore, k=RAG_RERANKER_CANDIDATES if RAG_RERANKER else k)
+    elif RAG_RERANKER:
+        candidatos_base = vectorstore.buscar(query_busca, k=RAG_RERANKER_CANDIDATES)
     else:
-        resultados = vectorstore.buscar(query_busca, k=k)
+        candidatos_base = vectorstore.buscar(query_busca, k=k)
 
-    # 3. Guarda a query usada na recuperação
+    # 3. Re-ranking opcional
+    if RAG_RERANKER:
+        resultados = rerankar(pergunta, candidatos_base, top_k=k)
+    else:
+        resultados = candidatos_base[:k]
+
+    # 4. Anota query usada
     for chunk in resultados:
         chunk["query_usada"] = query_busca
 
