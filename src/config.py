@@ -33,6 +33,13 @@ RAG_HYBRID_ENABLED: bool = os.getenv("RAG_HYBRID_ENABLED", "true").lower() == "t
 RAG_HYBRID_N_DENSE: int = int(os.getenv("RAG_HYBRID_N_DENSE", "10"))
 RAG_HYBRID_N_SPARSE: int = int(os.getenv("RAG_HYBRID_N_SPARSE", "10"))
 
+# Re-ranking com Cross-Encoder.
+# RAG_RERANKER_CANDIDATES: quantos candidatos buscar no FAISS antes de rerankar.
+# O resultado final sempre terá RAG_TOP_K chunks.
+RAG_RERANKER: bool = os.getenv("RAG_RERANKER", "true").lower() == "true"
+RAG_RERANKER_CANDIDATES: int = int(os.getenv("RAG_RERANKER_CANDIDATES", "15"))
+
+
 # ---------------------------------------------------------------------------
 # Caminhos
 # ---------------------------------------------------------------------------
