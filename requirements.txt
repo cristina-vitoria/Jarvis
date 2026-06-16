@@ -9,6 +9,7 @@ openai>=1.30.0,<2.0.0
 # ── RAG ──────────────────────────────────────────────────────────────────────
 sentence-transformers>=2.7.0,<4.0.0
 faiss-cpu>=1.8.0,<2.0.0
+rank-bm25>=0.2.2,<1.0.0
 
 # ── PyTorch (CPU-only) ───────────────────────────────────────────────────────
 # IMPORTANTE: instale ANTES de rodar este requirements.txt com:
