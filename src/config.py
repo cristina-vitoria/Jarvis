@@ -27,7 +27,7 @@ EMBED_MODEL: str = os.getenv(
 
 # Query Expansion: expande a query via LLM antes de buscar no FAISS.
 # Adiciona latência de ~1 chamada LLM extra por consulta RAG.
-# Recomendado: true em produção, false em testes rápidos.
+# Recomendado: false só em testes rápidos.
 RAG_QUERY_EXPANSION: bool = os.getenv("RAG_QUERY_EXPANSION", "true").lower() == "true"
 
 # ---------------------------------------------------------------------------
