@@ -13,6 +13,8 @@ from src.rag.loader import carregar_documentos
 from src.rag.chunker import chunk_documentos
 from src.rag.vectorstore import construir_vectorstore
 from src.config import DOCSMD_PATH
+from src.config import RAG_HYBRID_ENABLED
+from src.rag.bm25_store import BM25Store
 
 
 def inicializar_rag():
@@ -27,8 +29,9 @@ def inicializar_rag():
         return None
     chunks = chunk_documentos(documentos)
     vectorstore = construir_vectorstore(chunks)
+    bm25 = BM25Store(chunks) if RAG_HYBRID_ENABLED else None
     print(f"[JARVIS] RAG inicializado com {len(chunks)} chunks de {len(documentos)} documentos.")
-    return vectorstore
+    return vectorstore, bm25
 
 
 def main():
@@ -38,8 +41,8 @@ def main():
     print("Comandos: 'sair' para encerrar | 'cancelar' durante quiz")
     print("-" * 55)
 
-    vectorstore = inicializar_rag()
-    agente = JarvisAgent(vectorstore=vectorstore)
+    vectorstore, bm25 = inicializar_rag()
+    agente = JarvisAgent(vectorstore=vectorstore, bm25_store=bm25)
 
     print("\nSistema pronto. Digite sua mensagem abaixo.\n")
 

@@ -9,7 +9,7 @@ from src.rag.retriever import recuperar
 SCORE_MINIMO = 0.30   # abaixo disso o chunk é considerado irrelevante
 
 
-def buscar_material_rag(pergunta: str, vectorstore, llm_fn) -> str:
+def buscar_material_rag(pergunta: str, vectorstore, llm_fn, bm25_store=None) -> str:
     """
     Recupera trechos relevantes dos materiais de estudo e gera uma resposta.
 
@@ -21,7 +21,7 @@ def buscar_material_rag(pergunta: str, vectorstore, llm_fn) -> str:
     Returns:
         Resposta gerada com base nos documentos recuperados.
     """
-    chunks = recuperar(pergunta, vectorstore, llm_fn=llm_fn)
+    chunks = recuperar(pergunta, vectorstore, llm_fn=llm_fn, bm25_store=bm25_store)
     chunks = [c for c in chunks if c.get("score", 0) >= SCORE_MINIMO]
 
     if not chunks:

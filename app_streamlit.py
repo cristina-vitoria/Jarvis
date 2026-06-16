@@ -68,8 +68,9 @@ def _agente():
 def _carregar_agente():
     from main import inicializar_rag
     from src.agent import JarvisAgent
-    vectorstore = inicializar_rag()
-    agente = JarvisAgent(vectorstore=vectorstore)
+
+    vectorstore, bm25 = inicializar_rag()   
+    agente = JarvisAgent(vectorstore=vectorstore, bm25_store=bm25)
     return agente, vectorstore
 
 
@@ -581,7 +582,11 @@ with tab_tarefas:
             col_check, col_info = st.columns([1, 10])
             concluida = t.get("status") == "concluida"
             with col_check:
-                marcar = st.checkbox("", value=concluida, key=f"task_{t['id']}")
+                marcar = st.checkbox(
+                    "Concluída",
+                    value=concluida,
+                    key=f"task_{t['id']}",
+                    label_visibility="collapsed",)
                 if marcar and not concluida:
                     for item in tarefas:
                         if item["id"] == t["id"]:

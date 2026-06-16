@@ -34,6 +34,7 @@ def recuperar(
     vectorstore,
     k: int = RAG_TOP_K,
     llm_fn=None,
+    bm25_store=None, 
 ) -> list[dict]:
     """Recupera os chunks mais relevantes para a pergunta.
 
@@ -61,7 +62,7 @@ def recuperar(
 
     # 2. Busca: híbrida ou semântica pura
     if RAG_HYBRID_ENABLED:
-        candidatos_base = recuperar_hibrido(query_busca, vectorstore, k=RAG_RERANKER_CANDIDATES if RAG_RERANKER else k)
+        candidatos_base = recuperar_hibrido(query_busca, vectorstore, bm25_store, k=RAG_RERANKER_CANDIDATES if RAG_RERANKER else k)
     elif RAG_RERANKER:
         candidatos_base = vectorstore.buscar(query_busca, k=RAG_RERANKER_CANDIDATES)
     else:

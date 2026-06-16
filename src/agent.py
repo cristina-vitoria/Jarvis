@@ -178,8 +178,9 @@ class QuizSession:
 
 
 class JarvisAgent:
-    def __init__(self, vectorstore=None):
+    def __init__(self, vectorstore=None, bm25_store=None):
         self.vectorstore = vectorstore
+        self.bm25_store = bm25_store
         self.historico = [{"role": "system", "content": SYSTEM_PROMPT}]
         self.quiz_session: QuizSession | None = None
 
@@ -328,7 +329,8 @@ class JarvisAgent:
                     resultado = buscar_material_rag(
                         pergunta=arguments.get("pergunta", ""),
                         vectorstore=self.vectorstore,
-                        llm_fn=lambda msg: _gerar_com_retry(msg),
+                        llm_fn=lambda msg, **kwargs: _gerar_com_retry(msg, **kwargs),
+                        bm25_store=self.bm25_store,
                     )
 
             elif tool_name == "gerar_exercicios":
