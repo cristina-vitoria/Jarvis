@@ -21,8 +21,22 @@ LLM_TIMEOUT: int = int(os.getenv("LLM_TIMEOUT", "120"))
 CHUNK_SIZE: int = int(os.getenv("CHUNK_SIZE", "1000"))
 CHUNK_OVERLAP: int = int(os.getenv("CHUNK_OVERLAP", "150"))
 RAG_TOP_K: int = int(os.getenv("RAG_TOP_K", "3"))
+
+# Modelo de embeddings.
+# Padrão: multilingual-e5-base — treinado em XLM-RoBERTa-base com fine-tuning
+# contrastivo multilingual. Bom desempenho em PT-BR com tamanho razoável (~280MB).
+#
+# Alternativas em ordem de qualidade (maiores e mais lentas):
+#   intfloat/multilingual-e5-large-instruct  — ~560MB, melhor qualidade PT-BR,
+#                                               aceita prefixo query:/passage:
+#   BAAI/bge-m3                              — ~1.7GB, máxima qualidade,
+#                                               dense+sparse+multi-vector
+#   cnmoro/portuguese-bge-m3                 — ~1GB, bge-m3 podado para PT
+#
+# ATENÇÃO: ao trocar o modelo o índice FAISS é automaticamente recriado
+# na próxima inicialização (o Jarvis já reconstrói em memória a cada restart).
 EMBED_MODEL: str = os.getenv(
-    "EMBED_MODEL", "sentence-transformers/multi-qa-MiniLM-L6-cos-v1"
+    "EMBED_MODEL", "intfloat/multilingual-e5-base"
 )
 
 # Query Expansion / HyDE: transforma a query via LLM antes de buscar no FAISS.
