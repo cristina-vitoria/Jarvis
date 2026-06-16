@@ -163,7 +163,7 @@ pip install -r requirements.txt
 
 ### 5. Configurar variáveis de ambiente
 
-Copie o arquivo de exemplo e preencha com as informações fornecidas pelo professor:
+Copie o arquivo de exemplo e preencha com as informações:
 
 ```bash
 cp .env.example .env   # Linux/macOS
@@ -276,7 +276,7 @@ Foram identificadas 4 categorias de falhas. Ver [`evaluation/analise_erros.md`](
 |---|---|---|
 | Python | **3.11** | Runtime (3.13 não suportado) |
 | PyTorch | 2.2.0 (CPU) | Backend do sentence-transformers |
-| Qwen 2.5 14B | — | LLM principal (via API do professor) |
+| Qwen 2.5 14B | — | LLM principal (via API) |
 | Sentence Transformers | 2.7.0 | Geração de embeddings |
 | FAISS-CPU | 1.8.0 | Índice vetorial |
 | PyMuPDF | 1.24.0 | Extração de PDF com estrutura |
