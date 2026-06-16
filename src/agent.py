@@ -10,6 +10,7 @@ from src.tools.agenda import consultar_agenda
 from src.tools.tarefas import listar_tarefas, adicionar_tarefa, concluir_tarefa
 from src.tools.learning import gerar_exercicios
 from src.tools.rag_tool import buscar_material_rag
+from src.rag.retriever import recuperar
 
 # Schema das ferramentas disponíveis para o modelo
 TOOLS_SCHEMA = [
@@ -98,6 +99,10 @@ TOOLS_SCHEMA = [
 # Erros de API que justificam retry
 _ERROS_RETRY = (APITimeoutError, InternalServerError, APIConnectionError)
 
+# Número máximo de pares usuário/assistente mantidos no histórico.
+# Evita ultrapassar a janela de contexto do modelo (32k tokens no Qwen 2.5).
+_MAX_HISTORICO_TURNS = 20
+
 
 def _gerar_com_retry(messages: list, max_new_tokens: int = 512,
                      tentativas: int = 3, espera_base: float = 5.0) -> str:
@@ -185,6 +190,20 @@ class JarvisAgent:
         self.quiz_session: QuizSession | None = None
 
     # ------------------------------------------------------------------
+    # Histórico com janela deslizante
+    # ------------------------------------------------------------------
+
+    def _historico_truncado(self) -> list:
+        """Retorna o histórico com no máximo _MAX_HISTORICO_TURNS trocas recentes.
+
+        O system prompt (historico[0]) é sempre preservado.
+        Evita ultrapassar a janela de contexto do modelo em sessões longas.
+        """
+        sistema = self.historico[:1]
+        recentes = self.historico[1:][-_MAX_HISTORICO_TURNS * 2:]
+        return sistema + recentes
+
+    # ------------------------------------------------------------------
     # Quiz helpers
     # ------------------------------------------------------------------
 
@@ -229,7 +248,6 @@ class JarvisAgent:
                 veredicto = _gerar_com_retry([{"role": "user", "content": prompt_aval}], max_new_tokens=16)
                 correto = "SIM" in veredicto.upper()
             except Exception:
-                # Em caso de falha da API, assume incorreto e continua
                 correto = False
 
         feedback = q.get("explicacao", "")
@@ -249,12 +267,53 @@ class JarvisAgent:
         )
 
     # ------------------------------------------------------------------
-    # Geração de perguntas do quiz (com retry + fallback)
+    # Geração de perguntas do quiz ancoradas no RAG
     # ------------------------------------------------------------------
 
     def _iniciar_quiz(self, topico: str, num_perguntas: int = 3) -> str:
-        """Gera as perguntas via LLM com retry. Em caso de falha total, retorna mensagem amigável."""
+        """Gera perguntas de múltipla escolha ancoradas nos documentos do RAG.
+
+        Fluxo:
+          1. Recupera chunks relevantes sobre o tópico via pipeline RAG completa
+             (Query Expansion + Busca Híbrida + Re-ranking).
+          2. Usa os chunks como contexto no prompt de geração, garantindo que
+             as perguntas reflitam o material real carregado pelo usuário.
+          3. Em caso de falha na API, retorna mensagem amigável com retry.
+
+        Isso substitui a versão anterior que gerava perguntas sem nenhum contexto,
+        o que produzia perguntas genéricas desconectadas do material de estudo.
+        """
+        llm_fn = lambda msg, **kw: _gerar_com_retry(msg, **kw)  # noqa: E731
+
+        # --- 1. Buscar contexto no RAG ---
+        contexto = ""
+        if self.vectorstore is not None:
+            try:
+                chunks = recuperar(
+                    topico,
+                    self.vectorstore,
+                    llm_fn=llm_fn,
+                    bm25_store=self.bm25_store,
+                )
+                if chunks:
+                    contexto = "\n\n".join(
+                        f"[{c.get('fonte', 'doc')}]\n{c['texto']}" for c in chunks
+                    )
+            except Exception as exc:
+                print(f"[JARVIS][quiz] Falha ao recuperar contexto RAG: {exc}")
+                # Continua sem contexto — melhor do que abortar o quiz inteiro
+
+        instrucao_contexto = (
+            f"Use SOMENTE as informações do contexto abaixo para elaborar as perguntas.\n"
+            f"Se o contexto for insuficiente, crie perguntas gerais sobre '{topico}'.\n\n"
+            f"=== CONTEXTO DOS MATERIAIS ===\n{contexto}\n=== FIM DO CONTEXTO ===\n\n"
+            if contexto
+            else ""
+        )
+
+        # --- 2. Gerar perguntas ---
         prompt = (
+            f"{instrucao_contexto}"
             f"Crie exatamente {num_perguntas} perguntas de múltipla escolha sobre: '{topico}'.\n"
             "Use EXATAMENTE este formato para cada pergunta (sem variações):\n"
             "PERGUNTA: <enunciado>\n"
@@ -271,6 +330,7 @@ class JarvisAgent:
         try:
             raw = _gerar_com_retry(
                 [{"role": "user", "content": prompt}],
+                max_new_tokens=800,
                 tentativas=3,
                 espera_base=5.0,
             )
@@ -288,6 +348,7 @@ class JarvisAgent:
                 "Tente novamente ou escolha outro tópico."
             )
 
+        # --- 3. Parsear e iniciar sessão ---
         perguntas = _parsear_quiz_llm(raw)
 
         if not perguntas:
@@ -297,8 +358,9 @@ class JarvisAgent:
             )
 
         self.quiz_session = QuizSession(topico=topico, perguntas=perguntas)
+        origem = "com base nos seus materiais" if contexto else "(sem materiais carregados — perguntas gerais)"
         return (
-            f"🚀 Quiz iniciado sobre **{topico}**! "
+            f"🚀 Quiz iniciado sobre **{topico}** {origem}! "
             f"São {len(perguntas)} pergunta(s). Boa sorte!\n\n"
             + self._formatar_pergunta_quiz()
         )
@@ -340,7 +402,8 @@ class JarvisAgent:
                     resultado = gerar_exercicios(
                         topico=arguments.get("topico", ""),
                         vectorstore=self.vectorstore,
-                        llm_fn=lambda msg: _gerar_com_retry(msg),
+                        llm_fn=lambda msg, **kwargs: _gerar_com_retry(msg, **kwargs),
+                        bm25_store=self.bm25_store,
                         quantidade=arguments.get("quantidade", 3),
                     )
 
@@ -411,7 +474,7 @@ class JarvisAgent:
                 self.historico.append({"role": "assistant", "content": resultado_ferramenta})
                 return resultado_ferramenta
 
-            messages_com_resultado = self.historico + [
+            messages_com_resultado = self._historico_truncado() + [
                 {
                     "role": "assistant",
                     "content": f"[Ferramenta {tool_name} retornou]: {resultado_ferramenta}",
@@ -424,10 +487,10 @@ class JarvisAgent:
             try:
                 resposta_final = _gerar_com_retry(messages_com_resultado)
             except _ERROS_RETRY:
-                resposta_final = resultado_ferramenta  # exibe o resultado bruto se LLM falhar
+                resposta_final = resultado_ferramenta
         else:
             try:
-                resposta_final = _gerar_com_retry(self.historico)
+                resposta_final = _gerar_com_retry(self._historico_truncado())
             except _ERROS_RETRY:
                 resposta_final = (
                     "⚠️ O servidor do modelo está instável no momento. "
@@ -458,7 +521,7 @@ def _parsear_quiz_llm(raw: str) -> list[dict]:
                 q["enunciado"] = linha.split(":", 1)[1].strip()
             elif upper.startswith("GABARITO:"):
                 q["gabarito"] = linha.split(":", 1)[1].strip().upper()
-            elif upper.startswith("EXPLICACAO:") or upper.startswith("EXPLICAÇÃO:"):
+            elif upper.startswith("EXPLICACAO:") or upper.startswith("EXPLICACÃO:"):
                 q["explicacao"] = linha.split(":", 1)[1].strip()
             elif linha and len(linha) > 2 and linha[1] in ").:" and linha[0].upper() in "ABCD":
                 letra = linha[0].upper()
