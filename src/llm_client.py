@@ -46,7 +46,13 @@ def gerar_resposta(messages: list, max_new_tokens: int = MAX_NEW_TOKENS) -> str:
         messages=messages,
         max_tokens=max_new_tokens,
     )
-    return resp.choices[0].message.content.strip()
+    if not resp.choices:
+        raise ValueError("A API retornou uma resposta sem 'choices' (possível filtro de conteúdo).")
+    content = resp.choices[0].message.content
+    if content is None:
+        raise ValueError("O modelo retornou 'content' nulo (finish_reason inesperado).")
+    return content.strip()
+
 
 
 # ---------------------------------------------------------------------------
