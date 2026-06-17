@@ -460,8 +460,6 @@ class JarvisAgent:
                 return f"Quiz sobre '{topico}' cancelado. Como posso ajudar?"
             return self._processar_resposta_quiz(user_message)
 
-        self.historico.append({"role": "user", "content": user_message})
-
         chamada = decidir_ferramenta(user_message, TOOLS_SCHEMA)
 
         if chamada:
@@ -471,8 +469,13 @@ class JarvisAgent:
             resultado_ferramenta = self._executar_ferramenta(tool_name, arguments)
 
             if tool_name == "quiz_interativo":
-                self.historico.append({"role": "assistant", "content": resultado_ferramenta})
-                return resultado_ferramenta
+                if self.quiz_session is not None:
+                    self.historico.append({"role": "user", "content": user_message})
+                    self.historico.append({"role": "assistant", "content": resultado_ferramenta})
+                    
+                    return resultado_ferramenta
+
+            self.historico.append({"role": "user", "content": user_message})
 
             messages_com_resultado = self._historico_truncado() + [
                 {
@@ -489,6 +492,8 @@ class JarvisAgent:
             except _ERROS_RETRY:
                 resposta_final = resultado_ferramenta
         else:
+            self.historico.append({"role": "user", "content": user_message})
+
             try:
                 resposta_final = _gerar_com_retry(self._historico_truncado())
             except _ERROS_RETRY:

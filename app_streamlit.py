@@ -198,58 +198,12 @@ with st.sidebar:
     st.markdown('<p class="main-header">🎓 JARVIS</p>', unsafe_allow_html=True)
     st.markdown('<p class="sub-header">Assistente Acadêmico Inteligente</p>', unsafe_allow_html=True)
     st.divider()
-
-    # ── UPLOAD DE PDFs ────────────────────────────────────────────────
+    
+     # ── UPLOAD DE PDFs ────────────────────────────────────────────────
     docs_path = Path("data/docs")
     docs_path.mkdir(parents=True, exist_ok=True)
     docsmd_path = Path("data/docsmd")
     docsmd_path.mkdir(parents=True, exist_ok=True)
-
-    st.markdown("### 📤 Enviar documentos (PDF)")
-    st.caption(
-        "Os PDFs serão salvos em `data/docs/` e automaticamente "
-        "convertidos para Markdown estruturado em `data/docsmd/`."
-    )
-
-    with st.expander("⚙️ Metadados do documento (opcional)", expanded=False):
-        meta_disciplina = st.text_input(
-            "Disciplina",
-            placeholder="Ex: MC102 — Algoritmos e Programação de Computadores",
-            key="meta_disciplina",
-        )
-        meta_fonte = st.text_input(
-            "Fonte",
-            placeholder="Ex: IC/Unicamp — Prof. Alexandre Xavier Falcão",
-            key="meta_fonte",
-        )
-        meta_url = st.text_input(
-            "URL da fonte",
-            placeholder="https://www.ic.unicamp.br/~afalcao/mc102/",
-            key="meta_url",
-        )
-        meta_licenca = st.text_input(
-            "Licença",
-            placeholder="Ex: CC BY-NC-SA 4.0",
-            key="meta_licenca",
-        )
-
-    uploaded = st.file_uploader("Carregar PDF", type=["pdf"])
-    if uploaded:
-        with st.spinner("Convertendo PDF..."):
-            try:
-                md_path = processar_upload_pdf(
-                    uploaded,
-                    disciplina=meta_disciplina,
-                    fonte=meta_fonte,
-                    fonte_url=meta_url,
-                    licenca=meta_licenca,
-                )
-                st.success(f"Documento carregado: `{Path(md_path).name}`")
-                st.session_state["rag_indexado"] = False
-            except RuntimeError as e:
-                st.error(str(e))
-
-    st.divider()
 
     # ── BOTÃO INICIAR ────────────────────────────────────────────────
     if not st.session_state["rag_carregado"]:
@@ -304,6 +258,52 @@ with st.sidebar:
     ]
     for icone, nome in ferramentas:
         st.markdown(f"{icone} `{nome}`")
+
+    st.divider()
+
+    st.markdown("### 📤 Enviar documentos (PDF)")
+    st.caption(
+        "Os PDFs serão salvos em `data/docs/` e automaticamente "
+        "convertidos para Markdown estruturado em `data/docsmd/`."
+    )
+
+    with st.expander("⚙️ Metadados do documento (opcional)", expanded=False):
+        meta_disciplina = st.text_input(
+            "Disciplina",
+            placeholder="Ex: MC102 — Algoritmos e Programação de Computadores",
+            key="meta_disciplina",
+        )
+        meta_fonte = st.text_input(
+            "Fonte",
+            placeholder="Ex: IC/Unicamp — Prof. Alexandre Xavier Falcão",
+            key="meta_fonte",
+        )
+        meta_url = st.text_input(
+            "URL da fonte",
+            placeholder="https://www.ic.unicamp.br/~afalcao/mc102/",
+            key="meta_url",
+        )
+        meta_licenca = st.text_input(
+            "Licença",
+            placeholder="Ex: CC BY-NC-SA 4.0",
+            key="meta_licenca",
+        )
+
+    uploaded = st.file_uploader("Carregar PDF", type=["pdf"])
+    if uploaded:
+        with st.spinner("Convertendo PDF..."):
+            try:
+                md_path = processar_upload_pdf(
+                    uploaded,
+                    disciplina=meta_disciplina,
+                    fonte=meta_fonte,
+                    fonte_url=meta_url,
+                    licenca=meta_licenca,
+                )
+                st.success(f"Documento carregado: `{Path(md_path).name}`")
+                st.session_state["rag_indexado"] = False
+            except RuntimeError as e:
+                st.error(str(e))
 
     st.divider()
     st.markdown("### 📁 Documentos")
