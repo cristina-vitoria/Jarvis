@@ -5,7 +5,7 @@
   },
   {
     "id": 2,
-    "pergunta": "Quais são os principais tipos de estruturas de dados discutidos e quando cada um é indicado?"
+    "pergunta": "Quais as estruturas de dados apresentadas nos documentos?"
   },
   {
     "id": 3,
@@ -81,14 +81,14 @@
   },
   {
     "id": 21,
-    "pergunta": "Quem foi Alan Turing e qual foi sua contribuição para a ciência da computação?"
+    "pergunta": "Quais são os principais tipos de linguagens de programação e suas características distintivas?"
   },
   {
     "id": 22,
-    "pergunta": "O que é a máquina de Turing e por que ela é importante para a teoria da computação?"
+    "pergunta": "Quem foi Alan Turing e qual foi sua contribuição para a ciência da computação?"
   },
   {
     "id": 23,
-    "pergunta": "Quais são os principais tipos de linguagens de programação e suas características distintivas?"
+    "pergunta": "O que é a máquina de Turing e por que ela é importante para a teoria da computação?"
   }
 ]

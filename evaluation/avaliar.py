@@ -58,8 +58,8 @@ def main():
 
     # Inicializa o sistema
     print("\nInicializando RAG e modelo...")
-    vectorstore = inicializar_rag()
-    agente = JarvisAgent(vectorstore=vectorstore)
+    vectorstore, bm25 = inicializar_rag()
+    agente = JarvisAgent(vectorstore=vectorstore, bm25_store=bm25)
     print("Sistema inicializado!\n")
 
     resultados = []
