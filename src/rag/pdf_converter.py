@@ -315,9 +315,8 @@ def converter_pdf(
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    # Conta páginas sem abrir doc duas vezes
     with fitz.open(str(pdf_path)) as _doc:
-        num_pages = len(_doc)
+        num_pages = _doc.page_count
 
     raw, used_ocr = _extract_text(pdf_path)
 

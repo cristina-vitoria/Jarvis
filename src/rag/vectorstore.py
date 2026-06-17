@@ -8,6 +8,11 @@ class VectorStore:
     """Armazena chunks e o índice FAISS para busca semântica."""
 
     def __init__(self, chunks: list[dict]):
+        if not chunks:
+            raise ValueError(
+                "Não é possível criar um VectorStore vazio. "
+                "Carregue ao menos um documento antes de indexar."
+            )
         self.chunks = chunks
         textos = [c["texto"] for c in chunks]
         embeddings = gerar_embeddings(textos)

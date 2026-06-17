@@ -43,3 +43,4 @@ logs/*.jsonl
 # Sistema
 .DS_Store
 Thumbs.db
+.python-version
