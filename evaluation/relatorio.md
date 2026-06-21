@@ -1,6 +1,6 @@
 # Relatório de Avaliação — JARVIS Acadêmico
 
-**Data:** 24/05/2026 13:56  
+**Data:** 20/06/2026 13:25  
 **Total de perguntas:** 23
 
 ## Sumário
@@ -13,9 +13,11 @@
 
 ## Resultados Detalhados
 
-### ✅ Pergunta 1
+### ✅ Pergunta 1 — RAG
 
 **Pergunta:** Qual é a definição de algoritmo apresentada e quais etapas são listadas para transformar um problema em um programa?
+
+**Documentos recuperados:** `aula1.md — # Aula1 (parte 9/13) (score 0.6598); aula6.md — # Aula6 (parte 3/7) (score 0.5669); aula1.md — # Aula1 (parte 8/13) (score 0.6738)`
 
 **Resposta:**
 
@@ -35,9 +37,11 @@
 
 ---
 
-### ✅ Pergunta 2
+### ✅ Pergunta 2 — RAG
 
 **Pergunta:** Quais são os principais tipos de estruturas de dados discutidos e quando cada um é indicado?
+
+**Documentos recuperados:** `aula1.md — # Aula1 (parte 4/13) (score 0.0); aula5.md — # Aula5 (parte 1/6) (score 0.0); aula22.md — # Aula22 (parte 1/7) (score 0.0)`
 
 **Resposta:**
 
@@ -54,9 +58,11 @@
 
 ---
 
-### ❌ Pergunta 3
+### ❌ Pergunta 3 — RAG
 
 **Pergunta:** Explique os operadores lógicos (AND, OR, NOT) e dê um exemplo prático de uso.
+
+**Documentos recuperados:** `aula3.md — # Aula3 (parte 3/7) (score 0.0); aula16.md — # Aula16 (parte 1/9) (score 0.5195); aula7.md — # Aula7 (parte 1/7) (score 0.6145)`
 
 **Resposta:**
 
@@ -70,9 +76,11 @@
 
 ---
 
-### ✅ Pergunta 4
+### ✅ Pergunta 4 — RAG
 
 **Pergunta:** Explique a diferença entre hardware e software.
+
+**Documentos recuperados:** `aula1.md — # Aula1 (parte 5/13) (score 0.6293); aula1.md — # Aula1 (parte 3/13) (score 0.6303); aula1.md — # Aula1 (parte 10/13) (score 0.4551)`
 
 **Resposta:**
 
@@ -89,9 +97,11 @@
 
 ---
 
-### ✅ Pergunta 5
+### ✅ Pergunta 5 — RAG
 
 **Pergunta:** Quais regras ou convenções de nomeação de variáveis e funções o documento recomenda?
+
+**Documentos recuperados:** `aula2.md — # Aula2 (parte 1/10) (score 0.0); aula2.md — # Aula2 (parte 5/10) (score 0.4952); aula2.md — # Aula2 (parte 4/10) (score 0.0)`
 
 **Resposta:**
 
@@ -105,9 +115,11 @@
 
 ---
 
-### ✅ Pergunta 6
+### ✅ Pergunta 6 — RAG
 
 **Pergunta:** Quais exemplos de estruturas de repetição (loops) aparecem e como cada uma difere em uso?
+
+**Documentos recuperados:** `aula6.md — # Aula6 (parte 3/7) (score 0.5082); aula6.md — # Aula6 (parte 1/7) (score 0.4996); aula7.md — # Aula7 (parte 1/7) (score 0.0)`
 
 **Resposta:**
 
@@ -130,9 +142,11 @@
 
 ---
 
-### ✅ Pergunta 7
+### ✅ Pergunta 7 — RAG
 
 **Pergunta:** Para que serve o comando scanf em C?
+
+**Documentos recuperados:** `aula16.md — # Aula16 (parte 1/9) (score 0.5866); aula13.md — # Aula13 (parte 2/6) (score 0.0); aula4.md — # Aula4 (parte 1/6) (score 0.7533)`
 
 **Resposta:**
 
@@ -150,9 +164,11 @@
 
 ---
 
-### ✅ Pergunta 8
+### ✅ Pergunta 8 — RAG
 
 **Pergunta:** Explique o comando switch.
+
+**Documentos recuperados:** `aula8.md — # Aula8 (parte 1/8) (score 0.5889); aula7.md — # Aula7 (parte 1/7) (score 0.5947); aula1.md — # Aula1 (parte 8/13) (score 0.5201)`
 
 **Resposta:**
 
@@ -174,9 +190,11 @@
 
 ---
 
-### ✅ Pergunta 9
+### ✅ Pergunta 9 — RAG
 
 **Pergunta:** O que são cadeias de caracteres em C e como elas diferem de variáveis simples do tipo char?
+
+**Documentos recuperados:** `aula13.md — # Aula13 (parte 1/6) (score 0.5647); aula2.md — # Aula2 (parte 5/10) (score 0.5585); aula2.md — # Aula2 (parte 1/10) (score 0.0)`
 
 **Resposta:**
 
@@ -193,9 +211,11 @@
 
 ---
 
-### ❌ Pergunta 10
+### ❌ Pergunta 10 — RAG
 
 **Pergunta:** Qual a complexidade de tempo dos algoritmos de ordenação apresentados?
+
+**Documentos recuperados:** `aula19.md — # Aula19 (parte 3/7) (score 0.5403); aula10.md — # Aula10 (parte 3/8) (score 0.0); aula10.md — # Aula10 (parte 1/8) (score 0.0)`
 
 **Resposta:**
 
@@ -209,9 +229,11 @@
 
 ---
 
-### 🟡 Pergunta 11
+### 🟡 Pergunta 11 — RAG
 
 **Pergunta:** Em uma função, como os parâmetros podem ser passados?
+
+**Documentos recuperados:** `aula16.md — # Aula16 (parte 6/9) (score 0.6775); aula16.md — # Aula16 (parte 7/9) (score 0.0); aula16.md — # Aula16 (parte 5/9) (score 0.7694)`
 
 **Resposta:**
 
@@ -227,9 +249,11 @@
 
 ---
 
-### ✅ Pergunta 12
+### ✅ Pergunta 12 — RAG
 
 **Pergunta:** O que é uma matriz e o que significa linearização de matrizes?
+
+**Documentos recuperados:** `aula12.md — Lineariza¸c˜ao de Matrizes (score 0.5161); aula12.md — Exerc´ıcios (score 0.4978); aula12.md — ## Vetores Multidimensionais (parte 1/2) (score 0.4825)`
 
 **Resposta:**
 
@@ -245,9 +269,11 @@
 
 ---
 
-### ✅ Pergunta 13
+### ✅ Pergunta 13 — RAG
 
 **Pergunta:** Quais técnicas de depuração (debugging) são sugeridas para encontrar falhas em programas?
+
+**Documentos recuperados:** `aula3.md — # Aula3 (parte 5/7) (score 0.5405); aula20.md — # Aula20 (parte 2/14) (score 0.0); aula16.md — # Aula16 (parte 1/9) (score 0.6025)`
 
 **Resposta:**
 
@@ -261,9 +287,11 @@
 
 ---
 
-### 🟡 Pergunta 14
+### 🟡 Pergunta 14 — RAG
 
 **Pergunta:** Quais maneiras de medir complexidade são introduzidas?
+
+**Documentos recuperados:** `aula19.md — # Aula19 (parte 5/7) (score 0.0); aula19.md — # Aula19 (parte 3/7) (score 0.0); aula1.md — # Aula1 (parte 3/13) (score 0.4274)`
 
 **Resposta:**
 
@@ -282,9 +310,11 @@
 
 ---
 
-### ✅ Pergunta 15
+### ✅ Pergunta 15 — RAG
 
 **Pergunta:** Para que serve o comando printf em C?
+
+**Documentos recuperados:** `aula16.md — # Aula16 (parte 1/9) (score 0.5827); aula4.md — # Aula4 (parte 4/6) (score 0.5652); aula23.md — # Aula23 (parte 4/8) (score 0.608)`
 
 **Resposta:**
 
@@ -300,9 +330,11 @@
 
 ---
 
-### 🟡 Pergunta 16
+### 🟡 Pergunta 16 — RAG
 
 **Pergunta:** Quais vantagens cada estruturas compostas (arrays, listas etc) tem?
+
+**Documentos recuperados:** `aula1.md — # Aula1 (parte 3/13) (score 0.0); aula22.md — # Aula22 (parte 1/7) (score 0.5673); aula15.md — ## Registros (parte 1/5) (score 0.0)`
 
 **Resposta:**
 
@@ -318,9 +350,11 @@
 
 ---
 
-### ✅ Pergunta 17
+### ✅ Pergunta 17 — RAG
 
 **Pergunta:** Quais algoritmos de ordenação são mostrados e suas características essenciais?
+
+**Documentos recuperados:** `aula10.md — # Aula10 (parte 1/8) (score 0.0); aula19.md — # Aula19 (parte 3/7) (score 0.5228); aula19.md — # Aula19 (parte 6/7) (score 0.5785)`
 
 **Resposta:**
 
@@ -338,9 +372,11 @@
 
 ---
 
-### ❌ Pergunta 18
+### ❌ Pergunta 18 — RAG
 
 **Pergunta:** Quais formatos de I/O são cobertos e um exemplo de leitura e escrita mostrado?
+
+**Documentos recuperados:** `aula23.md — # Aula23 (parte 3/8) (score 0.0); aula23.md — # Aula23 (parte 4/8) (score 0.4977); aula24.md — # Aula24 (parte 1/9) (score 0.0)`
 
 **Resposta:**
 
@@ -354,9 +390,11 @@
 
 ---
 
-### ✅ Pergunta 19
+### ✅ Pergunta 19 — RAG
 
 **Pergunta:** Que diferenças o material aponta entre solução humana e execução por computador?
+
+**Documentos recuperados:** `aula1.md — # Aula1 (parte 5/13) (score 0.0); aula1.md — # Aula1 (parte 3/13) (score 0.0); aula19.md — # Aula19 (parte 1/7) (score 0.5489)`
 
 **Resposta:**
 
@@ -370,9 +408,11 @@
 
 ---
 
-### ✅ Pergunta 20
+### ✅ Pergunta 20 — RAG
 
 **Pergunta:** Como o material define e exemplifica memória principal versus memória secundária?
+
+**Documentos recuperados:** `aula1.md — # Aula1 (parte 3/13) (score 0.7911); aula1.md — # Aula1 (parte 4/13) (score 0.56); aula1.md — # Aula1 (parte 2/13) (score 0.5175)`
 
 **Resposta:**
 
@@ -390,9 +430,11 @@
 
 ---
 
-### ✅ Pergunta 21
+### ✅ Pergunta 21 — RAG
 
 **Pergunta:** Quem foi Alan Turing e qual foi sua contribuição para a ciência da computação?
+
+**Documentos recuperados:** `aula1.md — # Aula1 (parte 1/13) (score 0.3237); aula23.md — # Aula23 (parte 1/8) (score 0.3227); aula6.md — # Aula6 (parte 1/7) (score 0.3224)`
 
 **Resposta:**
 
@@ -402,13 +444,15 @@
 > 
 > Sinto muito não poder te ajudar com essa pergunta no momento!
 
-**Classificação:** Correta, não alucinou.
+**Classificação:** Correta
 
 ---
 
-### ✅ Pergunta 22
+### ✅ Pergunta 22 — RAG
 
 **Pergunta:** O que é a máquina de Turing e por que ela é importante para a teoria da computação?
+
+**Documentos recuperados:** `aula1.md — # Aula1 (parte 1/13) (score 0.5511); aula3.md — # Aula3 (parte 5/7) (score 0.454); aula1.md — # Aula1 (parte 4/13) (score 0.4921)`
 
 **Resposta:**
 
@@ -418,13 +462,15 @@
 > 
 > Sinto muito não poder te ajudar com essa pergunta específica no momento!
 
-**Classificação:** Correta, não alucinou.
+**Classificação:** Correta
 
 ---
 
-### ❌ Pergunta 23
+### ❌ Pergunta 23 — RAG
 
 **Pergunta:** Quais são os principais tipos de linguagens de programação e suas características distintivas?
+
+**Documentos recuperados:** `aula1.md — # Aula1 (parte 6/13) (score 0.6821); aula1.md — # Aula1 (parte 7/13) (score 0.577); aula20.md — # Aula20 (parte 2/14) (score 0.0)`
 
 **Resposta:**
 
@@ -440,6 +486,6 @@
 > 
 > Espero que essa explicação tenha sido clara! Se tiver mais alguma dúvida, é só perguntar. 😉
 
-**Classificação:** Incorreta, alucinou. 
+**Classificação:** Incorreta
 
 ---

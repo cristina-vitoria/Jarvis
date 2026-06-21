@@ -19,6 +19,7 @@ sys.path.insert(0, str(ROOT))
 from main import inicializar_rag
 from src.agent import JarvisAgent
 from src.rag.retriever import recuperar
+from src.llm_client import gerar_resposta
 
 PERGUNTAS_PATH = ROOT / "evaluation" / "perguntas.json"
 RESULTADOS_PATH = ROOT / "evaluation" / "resultados.json"
@@ -76,7 +77,13 @@ def main():
         # rastreabilidade total na análise de erros do relatório.
         docs_recuperados = []
         if tipo in ("rag", "aprendizado") and vectorstore is not None:
-            chunks = recuperar(pergunta, vectorstore)
+            # Usa o mesmo pipeline do agente (Query Expansion/HyDE + busca híbrida)
+            chunks = recuperar(
+                pergunta,
+                vectorstore,
+                llm_fn=lambda msg, **kw: gerar_resposta(msg, **kw),
+                bm25_store=bm25,
+            )
             for c in chunks:
                 entrada_doc = {
                     "id": c["id"],

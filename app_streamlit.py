@@ -6,6 +6,7 @@ from pathlib import Path
 from datetime import date
 from src.rag.pdf_converter import converter_pdf
 from src.config import DOCSMD_PATH
+from src.storage.progresso_store import carregar_progresso, listar_topicos_fracos
 
 # --- Configuração da página ---
 st.set_page_config(
@@ -255,6 +256,8 @@ with st.sidebar:
         ("📚", "buscar_material_rag"),
         ("✏️", "gerar_exercicios"),
         ("🧠", "quiz_interativo"),
+        ("📊", "ver_progresso"),
+        ("🗓️", "montar_plano_estudos"),
     ]
     for icone, nome in ferramentas:
         st.markdown(f"{icone} `{nome}`")
@@ -347,8 +350,8 @@ with st.sidebar:
 
 
 # ==================== ABAS PRINCIPAIS ====================
-tab_chat, tab_agenda, tab_tarefas, tab_logs = st.tabs(
-    ["💬 Chat", "📅 Agenda", "📋 Tarefas", "📊 Logs"]
+tab_chat, tab_agenda, tab_tarefas, tab_progresso, tab_logs = st.tabs(
+    ["💬 Chat", "📅 Agenda", "📋 Tarefas", "📈 Progresso", "📊 Logs"]
 )
 
 
@@ -624,6 +627,45 @@ with tab_tarefas:
                 tarefas_path.write_text(json.dumps(tarefas, ensure_ascii=False, indent=2), encoding="utf-8")
                 st.success(f"Tarefa '{novo_titulo}' adicionada!")
                 st.rerun()
+
+
+# ==================== ABA PROGRESSO ====================
+with tab_progresso:
+    st.markdown("### 📈 Meu Progresso")
+    st.caption("Desempenho nos quizzes por tópico. Atualizado automaticamente ao final de cada quiz.")
+
+    progresso = carregar_progresso()
+    if not progresso:
+        st.info("Nenhum quiz realizado ainda. Faça um quiz no chat para acompanhar seu progresso!")
+    else:
+        itens = sorted(progresso.values(), key=lambda x: x.get("percentual", 0))
+        media = int(sum(i.get("percentual", 0) for i in itens) / len(itens))
+        piores = listar_topicos_fracos(limite=1)
+
+        col_m1, col_m2, col_m3 = st.columns(3)
+        col_m1.metric("Tópicos avaliados", len(itens))
+        col_m2.metric("Aproveitamento médio", f"{media}%")
+        col_m3.metric("Tópico mais fraco", piores[0]["topico"] if piores else "—")
+
+        st.divider()
+        for item in itens:
+            pct = item.get("percentual", 0)
+            emoji = "🟢" if pct >= 80 else ("🟡" if pct >= 50 else "🔴")
+            ultimo = item.get("ultimo_quiz", "")[:10]
+            st.markdown(f"#### {emoji} {item['topico']}")
+            st.progress(
+                pct / 100,
+                text=f"{item['acertos']}/{item['total']} ({pct}%) — último quiz em {ultimo}",
+            )
+            historico = item.get("historico", [])
+            if len(historico) > 1:
+                with st.expander(f"Histórico ({len(historico)} quizzes)"):
+                    for h in reversed(historico):
+                        st.markdown(
+                            f"- {h.get('data', '')[:10]}: "
+                            f"{h['acertos']}/{h['total']} ({h['percentual']}%)"
+                        )
+            st.divider()
 
 
 # ==================== ABA LOGS ====================
