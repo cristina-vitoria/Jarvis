@@ -1,13 +1,11 @@
 [
   {
     "id": 1,
-    "tipo": "rag",
-    "pergunta": "Qual é a definição de algoritmo apresentada e quais etapas são listadas para transformar um problema em um programa?"
+    "pergunta": "O que é um algoritmo?"
   },
   {
     "id": 2,
-    "tipo": "rag",
-    "pergunta": "Quais as estruturas de dados apresentadas nos documentos?"
+    "pergunta": "Quais as estruturas de dados apresentadas nos materiais disponiveis?"
   },
   {
     "id": 3,
@@ -21,8 +19,7 @@
   },
   {
     "id": 5,
-    "tipo": "rag",
-    "pergunta": "Quais regras ou convenções de nomeação de variáveis e funções o documento recomenda?"
+    "pergunta": "Quais regras ou convenções de nomeação de variáveis e funções aparece nos materiais disponiveis?"
   },
   {
     "id": 6,
