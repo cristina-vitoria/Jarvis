@@ -33,8 +33,11 @@ env/
 *.faiss
 *.index
 
-# Logs 
+# Logs
 logs/*.jsonl
+
+# Dados de runtime
+data/progresso.json
 
 # Jupyter
 .ipynb_checkpoints/

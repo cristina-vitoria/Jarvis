@@ -10,6 +10,8 @@ from src.tools.agenda import consultar_agenda
 from src.tools.tarefas import listar_tarefas, adicionar_tarefa, concluir_tarefa
 from src.tools.learning import gerar_exercicios
 from src.tools.rag_tool import buscar_material_rag
+from src.tools.planejamento import montar_plano_estudos
+from src.storage.progresso_store import registrar_resultado_quiz, resumo_progresso
 from src.rag.retriever import recuperar
 
 # Schema das ferramentas disponíveis para o modelo
@@ -94,6 +96,24 @@ TOOLS_SCHEMA = [
             "required": ["topico"],
         },
     },
+    {
+        "name": "ver_progresso",
+        "description": "Exibe o histórico de desempenho do aluno nos quizzes por tópico, mostrando pontuações e áreas fracas.",
+        "parameters": {
+            "type": "object",
+            "properties": {},
+        },
+    },
+    {
+        "name": "montar_plano_estudos",
+        "description": "Monta um plano de estudos priorizado combinando agenda, tarefas pendentes e materiais. Use quando o usuário pedir um plano de estudos ou o que priorizar.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "foco": {"type": "string", "description": "Prova ou tópico a priorizar (opcional)"},
+            },
+        },
+    },
 ]
 
 # Erros de API que justificam retry
@@ -162,6 +182,13 @@ class QuizSession:
         total = len(self.perguntas)
         pct = int(self.acertos / total * 100) if total else 0
         emoji_nota = "🏆" if pct >= 80 else ("👍" if pct >= 50 else "📖")
+
+        # Persiste resultado para acompanhamento de progresso
+        try:
+            registrar_resultado_quiz(self.topico, self.acertos, total)
+        except Exception:
+            pass  # falha silenciosa: não interrompe o feedback ao aluno
+
         linhas = [
             f"## 🏁 Quiz finalizado — {self.topico}",
             f"**Resultado: {self.acertos}/{total} ({pct}%)**",
@@ -415,6 +442,17 @@ class JarvisAgent:
                         topico=arguments.get("topico", ""),
                         num_perguntas=arguments.get("num_perguntas", 3),
                     )
+
+            elif tool_name == "ver_progresso":
+                resultado = resumo_progresso()
+
+            elif tool_name == "montar_plano_estudos":
+                resultado = montar_plano_estudos(
+                    foco=arguments.get("foco"),
+                    vectorstore=self.vectorstore,
+                    llm_fn=lambda msg, **kwargs: _gerar_com_retry(msg, **kwargs),
+                    bm25_store=self.bm25_store,
+                )
 
             else:
                 resultado = f"Ferramenta '{tool_name}' não reconhecida."

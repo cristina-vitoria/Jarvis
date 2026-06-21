@@ -82,6 +82,7 @@ DOCSMD_PATH = DATA_PATH / "docsmd"
 LOGS_PATH = ROOT_PATH / "logs"
 AGENDA_PATH = DATA_PATH / "agenda.json"
 TAREFAS_PATH = DATA_PATH / "tarefas.json"
+PROGRESSO_PATH = DATA_PATH / "progresso.json"
 TOOL_LOG_PATH = LOGS_PATH / "tool_calls.jsonl"
 
 # Garante que as pastas existem

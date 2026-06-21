@@ -1,94 +1,117 @@
 [
   {
     "id": 1,
+    "tipo": "rag",
     "pergunta": "Qual é a definição de algoritmo apresentada e quais etapas são listadas para transformar um problema em um programa?"
   },
   {
     "id": 2,
+    "tipo": "rag",
     "pergunta": "Quais as estruturas de dados apresentadas nos documentos?"
   },
   {
     "id": 3,
+    "tipo": "rag",
     "pergunta": "Explique os operadores lógicos (AND, OR, NOT) e dê um exemplo prático de uso."
   },
   {
     "id": 4,
+    "tipo": "rag",
     "pergunta": "Explique a diferença entre hardware e software."
   },
   {
     "id": 5,
+    "tipo": "rag",
     "pergunta": "Quais regras ou convenções de nomeação de variáveis e funções o documento recomenda?"
   },
   {
     "id": 6,
+    "tipo": "rag",
     "pergunta": "Quais exemplos de estruturas de repetição (loops) aparecem e como cada uma difere em uso?"
   },
   {
     "id": 7,
+    "tipo": "rag",
     "pergunta": "Para que serve o comando scanf em C?"
   },
   {
     "id": 8,
+    "tipo": "rag",
     "pergunta": "Explique o comando switch."
   },
   {
     "id": 9,
+    "tipo": "rag",
     "pergunta": "O que são cadeias de caracteres em C e como elas diferem de variáveis simples do tipo char?"
   },
   {
     "id": 10,
+    "tipo": "rag",
     "pergunta": "Qual a complexidade de tempo dos algoritmos de ordenação apresentados?"
   },
   {
     "id": 11,
+    "tipo": "rag",
     "pergunta": "Em uma função, como os parâmetros podem ser passados?"
   },
   {
     "id": 12,
+    "tipo": "rag",
     "pergunta": "O que é uma matriz e o que significa linearização de matrizes?"
   },
   {
     "id": 13,
+    "tipo": "rag",
     "pergunta": "Quais técnicas de depuração (debugging) são sugeridas para encontrar falhas em programas?"
   },
   {
     "id": 14,
+    "tipo": "rag",
     "pergunta": "Quais maneiras de medir complexidade são introduzidas?"
   },
   {
     "id": 15,
+    "tipo": "rag",
     "pergunta": "Para que serve o comando printf em C?"
   },
   {
     "id": 16,
+    "tipo": "rag",
     "pergunta": "Quais vantagens cada estruturas compostas (arrays, listas etc) tem?"
   },
   {
     "id": 17,
+    "tipo": "rag",
     "pergunta": "Quais algoritmos de ordenação são mostrados e suas características essenciais?"
   },
   {
     "id": 18,
+    "tipo": "rag",
     "pergunta": "Quais formatos de I/O são cobertos e um exemplo de leitura e escrita mostrado?"
   },
   {
     "id": 19,
+    "tipo": "rag",
     "pergunta": "Que diferenças o material aponta entre solução humana e execução por computador?"
   },
   {
     "id": 20,
+    "tipo": "rag",
     "pergunta": "Como o material define e exemplifica memória principal versus memória secundária?"
   },
   {
     "id": 21,
+    "tipo": "rag",
     "pergunta": "Quais são os principais tipos de linguagens de programação e suas características distintivas?"
   },
   {
     "id": 22,
+    "tipo": "rag",
     "pergunta": "Quem foi Alan Turing e qual foi sua contribuição para a ciência da computação?"
   },
   {
     "id": 23,
+    "tipo": "rag",
     "pergunta": "O que é a máquina de Turing e por que ela é importante para a teoria da computação?"
   }
 ]

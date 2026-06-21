@@ -43,7 +43,18 @@ def main():
         linhas.append(f"### {emoji} Pergunta {r['id']} — {r['tipo'].upper()}\n")
         linhas.append(f"**Pergunta:** {r['pergunta']}\n")
         if r["documentos_recuperados"]:
-            docs = ", ".join(r["documentos_recuperados"])
+            partes = []
+            for d in r["documentos_recuperados"]:
+                if isinstance(d, dict):
+                    rotulo = d.get("fonte") or d.get("id", "?")
+                    heading = d.get("heading_secao", "")
+                    score = d.get("score")
+                    extra = f" — {heading}" if heading else ""
+                    extra += f" (score {score})" if score is not None else ""
+                    partes.append(f"{rotulo}{extra}")
+                else:
+                    partes.append(str(d))
+            docs = "; ".join(partes)
             linhas.append(f"**Documentos recuperados:** `{docs}`\n")
         linhas.append(f"**Resposta:**\n\n> {r['resposta'].replace(chr(10), chr(10) + '> ')}\n")
         linhas.append(f"**Classificação:** {r['classificacao'].capitalize()}\n")

@@ -68,6 +68,8 @@ _ALLOWED_TOOLS = {
     "buscar_material_rag": {"pergunta"},
     "gerar_exercicios": {"topico", "quantidade"},
     "quiz_interativo": {"topico", "num_perguntas"},
+    "ver_progresso": set(),
+    "montar_plano_estudos": {"foco"},
     "nenhuma": set(),
 }
 
@@ -94,6 +96,13 @@ Args: {"topico": "...", "quantidade": 3(opt)}
 
 7. quiz_interativo – Inicia quiz de múltipla escolha com active recall.
 Args: {"topico": "...", "num_perguntas": 3(opt)}
+
+8. ver_progresso – Mostra o histórico de desempenho do aluno nos quizzes.
+Args: {}
+
+9. montar_plano_estudos – Monta plano de estudos priorizado combinando agenda, tarefas e materiais.
+Use quando o usuário pedir um plano de estudos ou o que priorizar.
+Args: {"foco": "prova/tópico a priorizar"(opt)}
 """
 
 _SYSTEM_TOOL_SELECTOR = (

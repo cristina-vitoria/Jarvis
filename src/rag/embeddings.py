@@ -11,7 +11,12 @@ def _carregar_modelo():
     global _embed_model
     if _embed_model is None:
         print(f"[Embeddings] Carregando modelo de embeddings: {EMBED_MODEL}")
-        _embed_model = SentenceTransformer(EMBED_MODEL)
+
+        _embed_model = SentenceTransformer(
+            EMBED_MODEL,
+            device="cpu",
+        )
+
     return _embed_model
 
 
@@ -30,5 +35,9 @@ def gerar_embeddings(textos: list[str]) -> np.ndarray:
 def gerar_embedding_query(texto: str) -> np.ndarray:
     """Gera embedding para uma query."""
     modelo = _carregar_modelo()
-    emb = modelo.encode([texto], convert_to_numpy=True, normalize_embeddings=True)
+    emb = modelo.encode(
+        [texto],
+        convert_to_numpy=True,
+        normalize_embeddings=True,
+    )
     return emb.astype(np.float32)

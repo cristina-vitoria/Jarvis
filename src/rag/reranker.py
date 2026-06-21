@@ -28,7 +28,9 @@ def _get_reranker():
     """Carrega o Cross-Encoder uma única vez (lazy + cached)."""
     from sentence_transformers import CrossEncoder  # noqa: PLC0415
     logger.info("[Reranker] Carregando modelo '%s'...", RERANKER_MODEL)
-    model = CrossEncoder(RERANKER_MODEL, max_length=512)
+    # device="cpu" explícito: evita CUDA error em GPUs incompatíveis com o
+    # build do PyTorch (ex.: MX350/sm_61). O reranker roda bem em CPU (~100ms/15 chunks).
+    model = CrossEncoder(RERANKER_MODEL, max_length=512, device="cpu")
     logger.info("[Reranker] Modelo carregado.")
     return model
 
